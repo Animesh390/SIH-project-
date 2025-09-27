@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Change Password — College Portal</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --primary:#2563eb;
+      --accent:#06b6d4;
+      --muted:#6b7280;
+      --danger:#ef4444;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,var(--bg),#eef2ff);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .card{
+      width:100%;
+      max-width:760px;
+      background:var(--card);
+      border-radius:12px;
+      box-shadow:0 8px 30px rgba(7,12,20,0.08);
+      padding:28px;
+      display:grid;
+      grid-template-columns:1fr 340px;
+      gap:20px;
+      align-items:start;
+    }
+
+    @media (max-width:880px){
+      .card{grid-template-columns:1fr;}
+    }
+
+    h1{font-size:20px;margin:0 0 8px}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+
+    form{display:flex;flex-direction:column;gap:12px}
+
+    label{font-size:13px;color:#111827}
+    .input-wrap{display:flex;gap:8px;align-items:center}
+    input[type="password"], input[type="text"], input[type="email"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #e6e9ef;
+      outline:none;font-size:14px;
+      transition:box-shadow .15s, border-color .15s;
+    }
+    input:focus{box-shadow:0 6px 20px rgba(37,99,235,0.08);border-color:var(--primary)}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:10px 14px;border-radius:10px;border:0;background:var(--primary);color:white;font-weight:600;cursor:pointer;
+      box-shadow:0 6px 18px rgba(37,99,235,0.12);
+    }
+
+    .btn.secondary{background:transparent;color:var(--primary);border:1px solid rgba(37,99,235,0.12);box-shadow:none}
+
+    .muted{color:var(--muted);font-size:13px}
+    .note{font-size:13px;color:var(--muted);margin-top:8px}
+
+    .right-panel{
+      background:linear-gradient(180deg,#fbfdff,#ffffff);
+      border-radius:10px;padding:16px;border:1px solid #f1f5f9;
+    }
+
+    .strength{
+      height:10px;border-radius:999px;background:#eef2ff;overflow:hidden;border:1px solid #e6eef8
+    }
+    .strength > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981);transition:width .25s}
+
+    .requirements{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+    .req{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
+    .req.ok{color:var(--accent);font-weight:600}
+
+    .show-toggle{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+
+    .msg{padding:10px;border-radius:8px;font-size:14px}
+    .msg.success{background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0}
+    .msg.error{background:#fff1f2;color:#7f1d1d;border:1px solid #fecaca}
+
+    .footer-actions{display:flex;gap:10px;margin-top:6px}
+
+    .small{font-size:12px;color:var(--muted)}
+
+    /* forgot password modal */
+    .modal{
+      position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000;
+    }
+    .modal.active{display:flex}
+    .modal-content{
+      background:white;padding:20px;border-radius:10px;max-width:400px;width:100%;box-shadow:0 6px 24px rgba(0,0,0,0.2);
+    }
+    .modal-content h2{margin:0 0 12px;font-size:18px}
+    .close-btn{background:transparent;border:0;font-size:20px;cursor:pointer;float:right;color:#555}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <div>
+      <h1>Change Password</h1>
+      <p class="lead">Enter your current password and set a strong new password. The password must be at least 8 characters long, include one capital letter, one small letter, one number, and one special character.</p>
+
+      <form id="changeForm" autocomplete="off" novalidate>
+        <div>
+          <label for="current">Current Password</label>
+          <div class="input-wrap">
+            <input id="current" name="current" type="password" required aria-required="true" placeholder="Current password" />
+            <button type="button" class="btn secondary" id="fillDemo" title="Demo: auto-fill current">Demo</button>
+          </div>
+        </div>
+
+        <div>
+          <label for="newpass">New Password</label>
+          <input id="newpass" name="newpass" type="password" required placeholder="New password" aria-describedby="pwHelp" />
+          <div id="pwHelp" class="note">Use a strong password you haven't used before.</div>
+        </div>
+
+        <div>
+          <label for="confirm">Confirm New Password</label>
+          <input id="confirm" name="confirm" type="password" required placeholder="Confirm new password" />
+        </div>
+
+        <div class="show-toggle">
+          <input id="show" type="checkbox" /><label for="show">Show passwords</label>
+        </div>
+
+        <div class="footer-actions">
+          <button class="btn" id="submitBtn">Update Password</button>
+          <button type="button" class="btn secondary" id="forgotBtn">Forgot Password?</button>
+        </div>
+
+        <div id="response" style="margin-top:10px;display:none"></div>
+      </form>
+    </div>
+
+    <aside class="right-panel">
+      <h2 style="margin:0 0 8px;font-size:16px">Password Strength</h2>
+      <div class="strength" aria-hidden="true"><i id="strengthBar"></i></div>
+
+      <div class="requirements" aria-live="polite">
+        <div class="req" id="rLen">• At least 8 characters</div>
+        <div class="req" id="rUpper">• At least one uppercase letter (A-Z)</div>
+        <div class="req" id="rLower">• At least one lowercase letter (a-z)</div>
+        <div class="req" id="rNumber">• At least one number (0-9)</div>
+        <div class="req" id="rSpecial">• At least one special character (!@#$%^&*)</div>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="small">Tips</div>
+        <ul style="margin:6px 0 0 18px;color:var(--muted);font-size:13px">
+          <li>Use a unique passphrase (3+ random words) or a strong password manager.</li>
+          <li>Don't reuse college or personal passwords elsewhere.</li>
+          <li>Change password regularly (every 6–12 months) or if you suspect a compromise.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal" id="forgotModal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal">×</button>
+      <h2>Forgot Password</h2>
+      <p class="small">Enter your registered email address. A reset link will be sent to you.</p>
+      <form id="forgotForm">
+        <input type="email" id="forgotEmail" placeholder="Enter your email" required />
+        <div style="margin-top:10px">
+          <button type="submit" class="btn">Send Reset Link</button>
+        </div>
+        <div id="forgotResponse" style="margin-top:10px;font-size:14px"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const newpass = document.getElementById('newpass');
+    const confirm = document.getElementById('confirm');
+    const strengthBar = document.getElementById('strengthBar');
+    const rLen = document.getElementById('rLen');
+    const rUpper = document.getElementById('rUpper');
+    const rLower = document.getElementById('rLower');
+    const rNumber = document.getElementById('rNumber');
+    const rSpecial = document.getElementById('rSpecial');
+    const show = document.getElementById('show');
+    const form = document.getElementById('changeForm');
+    const response = document.getElementById('response');
+    const current = document.getElementById('current');
+    const fillDemo = document.getElementById('fillDemo');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const forgotBtn = document.getElementById('forgotBtn');
+    const forgotModal = document.getElementById('forgotModal');
+    const closeModal = document.getElementById('closeModal');
+    const forgotForm = document.getElementById('forgotForm');
+    const forgotResponse = document.getElementById('forgotResponse');
+    const forgotEmail = document.getElementById('forgotEmail');
+
+    function checkReqs(pw){
+      const hasLen = pw.length >= 8;
+      const hasUpper = /[A-Z]/.test(pw);
+      const hasLower = /[a-z]/.test(pw);
+      const hasNum = /[0-9]/.test(pw);
+      const hasSpec = /[!@#\$%\^&\*()_+\-=[\]{};':"\\|,.<>/?]+/.test(pw);
+
+      toggleClass(rLen, hasLen);
+      toggleClass(rUpper, hasUpper);
+      toggleClass(rLower, hasLower);
+      toggleClass(rNumber, hasNum);
+      toggleClass(rSpecial, hasSpec);
+
+      let score = 0;
+      if(hasLen) score += 1;
+      if(hasUpper) score += 1;
+      if(hasLower) score += 1;
+      if(hasNum) score += 1;
+      if(hasSpec) score += 1;
+      return score;
+    }
+
+    function toggleClass(el, ok){
+      if(ok) el.classList.add('ok'); else el.classList.remove('ok');
+    }
+
+    function updateStrength(){
+      const pw = newpass.value || '';
+      const score = checkReqs(pw);
+      const pct = (score/5)*100;
+      strengthBar.style.width = pct + '%';
+      if(score <= 2) strengthBar.setAttribute('aria-label','Weak');
+      else if(score === 3) strengthBar.setAttribute('aria-label','Medium');
+      else strengthBar.setAttribute('aria-label','Strong');
+    }
+
+    newpass.addEventListener('input', updateStrength);
+
+    show.addEventListener('change', ()=>{
+      const type = show.checked ? 'text' : 'password';
+      [current, newpass, confirm].forEach(i=>i.type = type);
+    });
+
+    fillDemo.addEventListener('click',(e)=>{
+      e.preventDefault();
+      current.value = 'Current@123';
+    });
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      response.style.display = 'none';
+      const cur = current.value.trim();
+      const np = newpass.value.trim();
+      const cp = confirm.value.trim();
+
+      if(!cur || !np || !cp){
+        showMessage('Please fill all fields','error');
+        return;
+      }
+
+      if(np !== cp){
+        showMessage('New password and confirmation do not match','error');
+        return;
+      }
+
+      const score = checkReqs(np);
+      if(score < 4){
+        showMessage('Password is not strong enough. Please follow all requirements.','error');
+        return;
+      }
+
+      submitBtn.disabled = true; submitBtn.textContent = 'Updating...';
+      setTimeout(()=>{
+        submitBtn.disabled = false; submitBtn.textContent = 'Update Password';
+        current.value = '';
+        newpass.value = '';
+        confirm.value = '';
+        updateStrength();
+        showMessage('Password updated successfully. You will be logged out from other devices.','success');
+      },1200);
+    });
+
+    function showMessage(text,type){
+      response.style.display = 'block';
+      response.className = '';
+      response.innerHTML = '';
+      const div = document.createElement('div');
+      div.className = 'msg ' + (type === 'success' ? 'success' : 'error');
+      div.textContent = text;
+      response.appendChild(div);
+    }
+
+    // Forgot Password Modal handlers
+    forgotBtn.addEventListener('click', ()=>{
+      forgotModal.classList.add('active');
+    });
+
+    closeModal.addEventListener('click', ()=>{
+      forgotModal.classList.remove('active');
+    });
+
+    forgotForm.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      forgotResponse.textContent = '';
+      const email = forgotEmail.value.trim();
+      if(!email){
+        forgotResponse.style.color = 'red';
+        forgotResponse.textContent = 'Please enter your email.';
+        return;
+      }
+      forgotResponse.style.color = '#2563eb';
+      forgotResponse.textContent = 'Sending reset link...';
+      setTimeout(()=>{
+        forgotResponse.style.color = 'green';
+        forgotResponse.textContent = 'A reset link has been sent to your email.';
+        forgotEmail.value = '';
+      },1500);
+    });
+
+    // init
+    updateStrength();
+  </script>
+</body>
+</html>

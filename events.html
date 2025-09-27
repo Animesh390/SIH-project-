@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Events</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    header {
+      background: #2e86de;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    section {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #2e86de;
+      border-left: 5px solid #2e86de;
+      padding-left: 10px;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .event-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .event-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .event-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: none;
+    }
+
+    .event-card img.active {
+      display: block;
+    }
+
+    .event-info {
+      padding: 15px;
+    }
+
+    .event-info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .event-info p {
+      margin: 10px 0 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+    }
+
+    .close, .prev, .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      padding: 10px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 50%;
+    }
+
+    .close {
+      top: 20px;
+      right: 30px;
+      transform: none;
+      font-size: 2.5rem;
+    }
+
+    .prev {
+      left: 30px;
+    }
+
+    .next {
+      right: 30px;
+    }
+
+    .caption {
+      color: #fff;
+      margin-top: 15px;
+      font-size: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>College Events</h1>
+  </header>
+
+  <!-- Past Events -->
+  <section>
+    <h2>Past Events</h2>
+    <div class="event-grid">
+
+      <div class="event-card">
+        <img src="past1a.jpg" alt="Cultural Fest" class="active">
+        <img src="past1b.jpg" alt="Cultural Fest">
+        <img src="past1c.jpg" alt="Cultural Fest">
+        <div class="event-info">
+          <h3>Cultural Fest 2024</h3>
+          <p>A grand celebration with music, dance and drama performances by students.</p>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="past2a.jpg" alt="Sports Meet" class="active">
+        <img src="past2b.jpg" alt="Sports Meet">
+        <div class="event-info">
+          <h3>Annual Sports Meet</h3>
+          <p>Track & field events along with cricket and football tournaments.</p>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="past3a.jpg" alt="Tech Fest" class="active">
+        <img src="past3b.jpg" alt="Tech Fest">
+        <img src="past3c.jpg" alt="Tech Fest">
+        <div class="event-info">
+          <h3>Tech Fest 2024</h3>
+          <p>Innovative projects, coding challenges, and robotics competition.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Upcoming Events -->
+  <section>
+    <h2>Upcoming Events</h2>
+    <div class="event-grid">
+
+      <div class="event-card">
+        <img src="hackathon.jpg" alt="Hackathon" class="active">
+        <img src="accurateimg.png" alt="Hackathon">
+        <img src="background.png" alt="Hackathon">
+        <div class="event-info">
+          <h3>Inter-College Hackathon</h3>
+          <p>24-hour coding marathon to build innovative solutions.</p>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="fresherparty.jpg" alt="Freshers Party" class="active">
+        <img src="vdfvg.jpg" alt="Freshers Party">
+        <div class="event-info">
+          <h3>Freshers Party</h3>
+          <p>Welcoming the new batch with a fun and engaging evening.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <span class="prev" onclick="manualSlide(-1)">&#10094;</span>
+    <img id="lightbox-img" src="" alt="">
+    <span class="next" onclick="manualSlide(1)">&#10095;</span>
+    <div class="caption" id="caption"></div>
+  </div>
+
+  <script>
+    // Auto slideshow in cards
+    document.querySelectorAll('.event-card').forEach(card => {
+      const imgs = card.querySelectorAll('img');
+      let index = 0;
+      if (imgs.length > 1) {
+        setInterval(() => {
+          imgs[index].classList.remove('active');
+          index = (index + 1) % imgs.length;
+          imgs[index].classList.add('active');
+        }, 3000);
+      }
+
+      // Open lightbox on click
+      card.addEventListener('click', () => {
+        imgArray = Array.from(imgs);
+        openLightbox(0);
+      });
+    });
+
+    // Lightbox logic
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const captionText = document.getElementById("caption");
+    let imgArray = [];
+    let currentIndex = 0;
+    let slideshowInterval;
+
+    function openLightbox(index) {
+      currentIndex = index;
+      lightbox.style.display = "flex";
+      showSlide(currentIndex);
+      startSlideshow();
+    }
+
+    function closeLightbox() {
+      lightbox.style.display = "none";
+      stopSlideshow();
+    }
+
+    function startSlideshow() {
+      stopSlideshow();
+      slideshowInterval = setInterval(() => {
+        changeSlide(1);
+      }, 3000);
+    }
+
+    function stopSlideshow() {
+      clearInterval(slideshowInterval);
+    }
+
+    function changeSlide(n) {
+      currentIndex += n;
+      if (currentIndex >= imgArray.length) currentIndex = 0;
+      if (currentIndex < 0) currentIndex = imgArray.length - 1;
+      showSlide(currentIndex);
+    }
+
+    function manualSlide(n) {
+      changeSlide(n);
+      startSlideshow();
+    }
+
+    function showSlide(index) {
+      lightboxImg.src = imgArray[index].src;
+      captionText.innerHTML = imgArray[index].alt || "";
+    }
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+  </script>
+</body>
+</html>

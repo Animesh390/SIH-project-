@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notice Board with Images</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #ffffff;
+  --card: #f9f9f9;
+  --accent1: #7c3aed;
+  --accent2: #06b6d4;
+  --glass: #ffffff;
+  --muted: #555;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;font-family:Inter,system-ui,Arial; background:#ffffff; color:#222;
+  display:flex;align-items:center;justify-content:center;padding:36px;
+}
+.frame{
+  width:100%;max-width:1100px;border-radius:20px;padding:1px;
+  background: linear-gradient(90deg,var(--accent1),var(--accent2));
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.panel{
+  border-radius:18px;padding:28px;background:#fff;
+  min-height:520px; display:grid;grid-template-columns:360px 1fr; gap:24px;
+}
+.controls{
+  padding:18px;background:#fafafa;border-radius:12px;border:1px solid #e5e5e5;
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{
+  width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:white;
+}
+h1{font-size:20px;margin:0}
+p.lead{margin:6px 0 18px;color:var(--muted);font-size:13px}
+label{font-size:13px;color:var(--muted);display:block;margin-top:10px;margin-bottom:8px}
+input[type="text"], textarea, input[type="date"], input[type="file"]{
+  width:100%;padding:10px 12px;border-radius:10px;border:1px solid #ddd;background:#fff;color:inherit;font-size:14px;outline:none;
+}
+textarea{min-height:90px;resize:vertical}
+.btn{display:inline-block;padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;font-weight:600;cursor:pointer;margin-top:12px}
+.btn.ghost{background:#f3f3f3;border:1px solid #ddd;color:#333;font-weight:600}
+.row{display:flex;gap:8px}
+.board{
+  padding:18px;border-radius:12px;background:#fafafa;border:1px solid #e5e5e5;
+  min-height:440px; display:flex;flex-direction:column;
+}
+.board-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.board-title{font-size:18px;font-weight:700}
+.muted{color:var(--muted);font-size:13px}
+.notices{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;align-content:start}
+.notice{
+  background:#fff;padding:12px;border-radius:12px;border:1px solid #e5e5e5;box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  display:flex;flex-direction:column;gap:8px;min-height:120px;position:relative;overflow:hidden
+}
+.notice img{max-width:100%;border-radius:10px;object-fit:cover;max-height:180px}
+.notice h3{margin:0;font-size:15px}
+.notice .meta{font-size:12px;color:var(--muted)}
+.notice p{margin:6px 0 0; font-size:13px;color:#333}
+.actions{display:flex;gap:8px;margin-top:auto}
+.pill{padding:6px 8px;border-radius:10px;font-size:13px;border:1px solid #ddd;background:#f9f9f9;cursor:pointer}
+.trash{position:absolute;right:8px;top:8px;background:#f3f3f3;border-radius:8px;padding:6px;cursor:pointer}
+.empty{display:flex;align-items:center;justify-content:center;height:260px;border-radius:10px;border:2px dashed #ddd;color:var(--muted);font-size:15px}
+@media (max-width:880px){
+  .panel{grid-template-columns:1fr;}
+  .controls{order:2}
+  .board{order:1}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="panel">
+    <div class="controls">
+      <div class="brand">
+        <div class="logo">NB</div>
+        <div>
+          <h1>Notice Board</h1>
+          <p class="lead">Faculty can upload a notice with optional photo.</p>
+        </div>
+      </div>
+
+      <label for="title">Title</label>
+      <input id="title" type="text" placeholder="e.g. Exam Schedule Released" />
+
+      <label for="date">Date</label>
+      <input id="date" type="date" />
+
+      <label for="message">Message</label>
+      <textarea id="message" placeholder="Write the notice details..."></textarea>
+
+      <label for="photo">Attach Photo (optional)</label>
+      <input id="photo" type="file" accept="image/*" />
+
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button id="addBtn" class="btn">Add Notice</button>
+        <button id="clearBtn" class="btn ghost">Clear All</button>
+      </div>
+    </div>
+
+    <div class="board"> 
+      <div class="board-header">
+        <div>
+          <div class="board-title">Pinned Notices</div>
+          <div class="muted" id="count">0 notices</div>
+        </div>
+        <div class="muted">Last updated: <span id="lastUpdated">—</span></div>
+      </div>
+
+      <div id="noticesContainer" class="notices"></div>
+      <div id="emptyState" class="empty" style="margin-top:12px;">No notices yet — add one from the left.</div>
+    </div>
+  </div> 
+</div>
+
+<script src = "notice.js"></script>
+</body>
+</html>

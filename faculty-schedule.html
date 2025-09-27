@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Schedule Upload</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#ecfdf5; padding:20px; }
+    h1 { text-align:center; color:#0f766e; }
+    .container { max-width:800px; margin:0 auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+    label { display:block; margin-top:10px; font-weight:bold; }
+    select, input[type="file"], button {
+      margin-top:5px; padding:10px; width:100%; border:1px solid #ccc; border-radius:8px;
+    }
+    button { background:#0f766e; color:#fff; border:none; cursor:pointer; margin-top:15px; }
+    button:hover { background:#134e4a; }
+    .timetable { margin-top:20px; padding:15px; border:1px solid #ddd; border-radius:8px; background:#f9f9f9; }
+    .timetable h3 { margin-bottom:8px; color:#333; }
+    .timetable img { max-width:100%; border-radius:8px; }
+    .timetable button { width:auto; margin-right:10px; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <h1>📅 Faculty Schedule Manager</h1>
+  <div class="container">
+    <label for="course">Select Course:</label>
+    <select id="course">
+      <option value="">-- Choose Course --</option>
+      <option>B.Tech</option>
+      <option>M.Tech</option>
+      <option>BCA</option>
+      <option>MCA</option>
+    </select>
+
+    <label for="section">Select Section:</label>
+    <select id="section">
+      <option value="">-- Choose Section --</option>
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+
+    <label for="file">Upload Timetable (Image/PDF):</label>
+    <input type="file" id="file" accept="image/*,.pdf">
+
+    <button onclick="uploadSchedule()">Upload Timetable</button>
+
+    <div id="timetableList"></div>
+  </div>
+
+  <script>
+    let schedules = JSON.parse(localStorage.getItem("schedules") || "[]");
+
+    function saveSchedules(){ localStorage.setItem("schedules", JSON.stringify(schedules)); }
+
+    function uploadSchedule(){
+      const course=document.getElementById("course").value;
+      const section=document.getElementById("section").value;
+      const file=document.getElementById("file").files[0];
+
+      if(!course || !section || !file){ alert("Please select all fields and file"); return; }
+
+      const reader=new FileReader();
+      reader.onload=function(e){
+        const existing=schedules.find(s=>s.course===course && s.section===section);
+        if(existing){ existing.file=e.target.result; }
+        else{ schedules.push({course,section,file:e.target.result}); }
+        saveSchedules();
+        render();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function deleteSchedule(index){
+      schedules.splice(index,1);
+      saveSchedules();
+      render();
+    }
+
+    
+
+    function render(){
+      const container=document.getElementById("timetableList");
+      container.innerHTML="";
+      schedules.forEach((s,i)=>{
+        container.innerHTML+=`
+          <div class="timetable">
+            <h3>${s.course} - Section ${s.section}</h3>
+            ${s.file.includes("application/pdf") 
+              ? `<a href="${s.file}" target="_blank">📄 View PDF</a>` 
+              : `<img src="${s.file}" alt="Timetable">`}
+            <br>
+            <button onclick="deleteSchedule(${i})">🗑️ Delete</button>
+          </div>
+        `;
+      });
+    }
+    render();
+  </script>
+</body>
+</html>

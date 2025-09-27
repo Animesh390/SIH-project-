@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Doubt Board</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#0f766e;
+      --secondary:#134e4a;
+      --muted:#555;
+      --bg:#ecfdf5;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg);
+      color:#222;
+      padding:20px;
+    }
+    header{
+      text-align:center;
+      font-size:28px;
+      font-weight:700;
+      margin-bottom:20px;
+      color:var(--primary);
+    }
+    .container{max-width:900px;margin:0 auto;}
+    .doubt{
+      background:#fff;
+      border:1px solid #e5e5e5;
+      border-radius:12px;
+      padding:14px;
+      margin-bottom:16px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    }
+    .doubt-header{
+      display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
+    }
+    .username{font-weight:600;color:var(--primary);}
+    .subject{font-size:13px;background:var(--primary);color:#fff;padding:2px 8px;border-radius:6px;}
+    .actions{display:flex;gap:12px;font-size:16px;}
+    .actions button{
+      background:none;border:none;cursor:pointer;font-size:14px;
+      color:var(--secondary);padding:4px 6px;border-radius:6px;
+    }
+    .actions button:hover{background:#f0fdfa;}
+    .replies{margin-top:10px;padding-left:10px;border-left:3px solid #eee;display:flex;flex-direction:column;gap:8px;}
+    .reply{background:#f9f9f9;padding:8px;border-radius:8px;font-size:14px;}
+    .reply .meta{font-size:12px;color:var(--muted);margin-bottom:4px;}
+    .reply-form{display:flex;gap:6px;margin-top:8px;}
+    .reply-form input{
+      flex:1;padding:6px 8px;font-size:14px;
+      border:1px solid #ccc;border-radius:6px;
+    }
+    .reply-form button{
+      background:linear-gradient(90deg,var(--primary),var(--secondary));
+      color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;
+    }
+    .reply-form button:hover{opacity:0.9;}
+  </style>
+</head>
+<body>
+  <header>👨‍🏫 Faculty Doubt Board</header>
+  <div class="container" id="doubtContainer"></div>
+
+  <script>
+    let doubts = JSON.parse(localStorage.getItem("doubts")||"[]");
+    const facultyUser = localStorage.getItem("facultyUser") || "Faculty";
+
+    function save(){ localStorage.setItem("doubts",JSON.stringify(doubts)); }
+
+    function addReply(id){
+      const input=document.getElementById("reply-"+id);
+      const text=input.value.trim();
+      if(!text) return;
+      const d=doubts.find(x=>x.id===id);
+      d.replies.push({user:facultyUser,text});
+      save();
+      render();
+    }
+
+    function deleteDoubt(id){
+      doubts=doubts.filter(d=>d.id!==id);
+      save();
+      render();
+    }
+
+    function toggleLike(id,type){
+      const d=doubts.find(x=>x.id===id);
+      if(type==="like") d.likes++;
+      else d.dislikes++;
+      save();
+      render();
+    }
+
+    function render(){
+      const container=document.getElementById("doubtContainer");
+      container.innerHTML="";
+      doubts.sort((a,b)=>b.likes-a.likes);
+      doubts.forEach(d=>{
+        const el=document.createElement("div");
+        el.className="doubt";
+        el.innerHTML=`
+          <div class="doubt-header">
+            <div>
+              <div class="username">${d.username}</div>
+              <div class="subject">${d.subject}</div>
+            </div>
+            <div class="actions">
+              <button onclick="toggleLike(${d.id},'like')">👍 ${d.likes}</button>
+              <button onclick="toggleLike(${d.id},'dislike')">👎 ${d.dislikes}</button>
+              <button onclick="deleteDoubt(${d.id})">🗑️ Delete</button>
+            </div>
+          </div>
+          <p>${d.text}</p>
+          <div class="replies">
+            ${d.replies.map(r=>`<div class="reply"><div class="meta">${r.user}</div>${r.text}</div>`).join("")}
+            <form class="reply-form" onsubmit="event.preventDefault();addReply(${d.id});">
+              <input type="text" id="reply-${d.id}" placeholder="Write a reply...">
+              <button type="submit">Reply</button>
+            </form>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+    render();
+  </script>
+</body>
+</html>

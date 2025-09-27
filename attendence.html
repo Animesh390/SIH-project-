@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Attendance Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    .calendar {
+      text-align: center;
+    }
+    .calendar table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .calendar th, .calendar td {
+      width: 14.28%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+    }
+    .calendar td:hover {
+      background: #f1f1f1;
+    }
+    .today {
+      background: #4caf50;
+      color: white;
+      border-radius: 50%;
+    }
+    .selected {
+      background: #2196f3;
+      color: white;
+      border-radius: 50%;
+    }
+    .overall {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .not-uploaded {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 Student Attendance Portal</h1>
+
+  <div class="container">
+    <!-- Attendance Section -->
+    <div class="card attendance">
+      <h3>Attendance for Today</h3>
+      <div id="attendanceContent">
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTable"></tbody>
+        </table>
+        <div class="overall">Overall Attendance (This Month): <span id="overallAttendance">0</span>%</div>
+      </div>
+    </div>
+
+    <!-- Calendar Section -->
+    <div class="card calendar">
+      <h3>Calendar</h3>
+      <select id="monthSelect"></select>
+      <select id="yearSelect"></select>
+      <table>
+        <thead>
+          <tr>
+            <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
+            <th>Thu</th><th>Fri</th><th>Sat</th>
+          </tr>
+        </thead>
+        <tbody id="calendarBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const monthNames = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+
+    const subjectList = [
+      { name: "📘 DSA", time: "09:00 AM - 10:00 AM" },
+      { name: "📘 PYTHON", time: "10:00 AM - 11:00 AM" },
+      { name: "📘 TC", time: "11:15 AM - 12:15 PM" },
+      { name: "📘 DSTL", time: "12:30 PM - 01:30 PM" },
+      { name: "📘 COA", time: "02:00 PM - 03:00 PM" },
+      { name: "📘 AI", time: "03:15 PM - 04:15 PM" },
+      { name: "📘 OS", time: "04:30 PM - 05:30 PM" }
+    ];
+
+    const attendanceRecords = {};
+    let selectedDate = new Date();
+    let currentMonth = selectedDate.getMonth();
+    let currentYear = selectedDate.getFullYear();
+
+    function getAttendanceForDate(dateKey) {
+      if (!attendanceRecords[dateKey]) {
+        attendanceRecords[dateKey] = subjectList.map(subj => ({
+          ...subj,
+          present: Math.random() > 0.5
+        }));
+      }
+      return attendanceRecords[dateKey];
+    }
+
+    function calculateMonthlyAttendance(month, year) {
+      let totalLectures = 0;
+      let totalPresent = 0;
+
+      Object.keys(attendanceRecords).forEach(dateKey => {
+        let d = new Date(dateKey);
+        if (d.getMonth() === month && d.getFullYear() === year) {
+          attendanceRecords[dateKey].forEach(lec => {
+            totalLectures++;
+            if (lec.present) totalPresent++;
+          });
+        }
+      });
+
+      if (totalLectures === 0) return 0;
+      return ((totalPresent / totalLectures) * 100).toFixed(2);
+    }
+
+    function loadAttendance(dateObj = new Date()) {
+      let title = document.querySelector(".attendance h3");
+      let attendanceContent = document.getElementById("attendanceContent");
+
+      const today = new Date();
+      let dateKey = dateObj.toISOString().split("T")[0];
+
+      // Update heading
+      if (
+        dateObj.getDate() === today.getDate() &&
+        dateObj.getMonth() === today.getMonth() &&
+        dateObj.getFullYear() === today.getFullYear()
+      ) {
+        title.textContent = "Attendance for Today";
+      } else {
+        title.textContent =
+          "Attendance for " +
+          dateObj.getDate() + " " +
+          monthNames[dateObj.getMonth()] + " " +
+          dateObj.getFullYear();
+      }
+
+      // Future date condition
+      if (dateObj > today) {
+        attendanceContent.innerHTML =
+          `<div class="not-uploaded">🚫 Attendance not uploaded yet</div>`;
+        return;
+      }
+
+      // Show table
+      attendanceContent.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTable"></tbody>
+        </table>
+        <div class="overall">Overall Attendance (This Month): <span id="overallAttendance">0</span>%</div>
+      `;
+
+      let tbody = document.getElementById("attendanceTable");
+      let lectures = getAttendanceForDate(dateKey);
+
+      lectures.forEach(lec => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${lec.name}</td>
+          <td>${lec.time}</td>
+          <td>${lec.present ? "✅ Present" : "❌ Absent"}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Calculate monthly attendance
+      let overall = calculateMonthlyAttendance(currentMonth, currentYear);
+      document.getElementById("overallAttendance").textContent = overall;
+    }
+
+    function renderCalendar() {
+      let month = parseInt(document.getElementById("monthSelect").value);
+      let year = parseInt(document.getElementById("yearSelect").value);
+      currentMonth = month;
+      currentYear = year;
+
+      let firstDay = new Date(year, month, 1).getDay();
+      let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let tbl = document.getElementById("calendarBody");
+      tbl.innerHTML = "";
+
+      let date = 1;
+      for (let i = 0; i < 6; i++) {
+        let row = document.createElement("tr");
+        for (let j = 0; j < 7; j++) {
+          if (i === 0 && j < firstDay) {
+            row.appendChild(document.createElement("td"));
+          } else if (date > daysInMonth) {
+            break;
+          } else {
+            let cell = document.createElement("td");
+            cell.textContent = date;
+
+            let thisDate = new Date(year, month, date);
+            let today = new Date();
+
+            if (
+              date === today.getDate() &&
+              year === today.getFullYear() &&
+              month === today.getMonth()
+            ) {
+              cell.classList.add("today");
+            }
+
+            if (
+              date === selectedDate.getDate() &&
+              month === selectedDate.getMonth() &&
+              year === selectedDate.getFullYear()
+            ) {
+              cell.classList.add("selected");
+            }
+
+            cell.onclick = () => {
+              selectedDate = thisDate;
+              renderCalendar();
+              loadAttendance(thisDate);
+            };
+
+            row.appendChild(cell);
+            date++;
+          }
+        }
+        tbl.appendChild(row);
+      }
+
+      // Update monthly overall whenever calendar changes
+      loadAttendance(selectedDate);
+    }
+
+    function initCalendar() {
+      let monthSelect = document.getElementById("monthSelect");
+      let yearSelect = document.getElementById("yearSelect");
+
+      monthNames.forEach((m, i) => {
+        let opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = m;
+        if (i === currentMonth) opt.selected = true;
+        monthSelect.appendChild(opt);
+      });
+
+      let currentYearVal = new Date().getFullYear();
+      for (let y = currentYearVal - 3; y <= currentYearVal + 3; y++) {
+        let opt = document.createElement("option");
+        opt.value = y;
+        opt.textContent = y;
+        if (y === currentYear) opt.selected = true;
+        yearSelect.appendChild(opt);
+      }
+
+      monthSelect.onchange = renderCalendar;
+      yearSelect.onchange = renderCalendar;
+
+      renderCalendar();
+      loadAttendance(selectedDate);
+    }
+
+    initCalendar();
+  </script>
+</body>
+</html>

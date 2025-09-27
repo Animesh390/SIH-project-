@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - College Portal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f9fbfd;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    
+
+    /* --- HEADER --- */
+    header {
+      position: relative;
+      color: #fff;
+      padding: 100px 20px 80px;
+      text-align: center;
+      border-bottom-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+      background: url('accurateimg.jpg') center/cover no-repeat;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, rgba(0, 98, 204, 0.85), rgba(0, 180, 219, 0.7));
+      border-bottom-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+    }
+
+    header * {
+      position: relative;
+      z-index: 1;
+    }
+
+    header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      animation: fadeDown 1.2s ease-in-out;
+    }
+
+    header p {
+      font-size: 1.3rem;
+      opacity: 0.95;
+      animation: fadeUp 1.2s ease-in-out;
+    }
+
+    /* --- Container --- */
+    .container {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    /* --- About Section --- */
+    .about {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .about h2, .team h2, .testimonials h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 25px;
+      color: #0062cc;
+      position: relative;
+    }
+
+    .about h2::after,
+    .team h2::after,
+    .testimonials h2::after {
+      content: '';
+      width: 70px;
+      height: 4px;
+      background: linear-gradient(90deg, #0062cc, #00b4db);
+      display: block;
+      margin: 10px auto 0;
+      border-radius: 5px;
+    }
+
+    .about p {
+      text-align: justify;
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+    }
+
+    /* --- Cards (Mission, Vision, Values) --- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 25px;
+      margin-top: 35px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #fefefe, #f2f6ff);
+      border-radius: 18px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      transition: 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card h3 {
+      margin-bottom: 12px;
+      color: #00b4db;
+    }
+
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+
+    /* --- Team Section --- */
+    .team {
+      margin-top: 60px;
+    }
+
+    .team-members {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .member {
+      background: #fff;
+      border-radius: 15px;
+      padding: 25px;
+      width: 260px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      transition: 0.3s;
+    }
+
+    .member:hover {
+      transform: translateY(-8px);
+    }
+
+    .member img {
+      width: 95px;
+      height: 95px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 4px solid #00b4db;
+    }
+
+    .member h4 {
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .member p {
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    /* --- Testimonials Section --- */
+    .testimonials {
+      margin-top: 70px;
+    }
+
+    .testimonial-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .testimonial {
+      background: #fff;
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      position: relative;
+      transition: 0.3s;
+    }
+
+    .testimonial:hover {
+      transform: translateY(-8px);
+    }
+
+    .testimonial::before {
+      content: "❝";
+      font-size: 3rem;
+      color: #00b4db;
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      opacity: 0.3;
+    }
+
+    .testimonial p {
+      font-size: 1rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .student {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .student img {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #0062cc;
+    }
+
+    .student h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .student span {
+      font-size: 0.85rem;
+      color: #777;
+    }
+
+    /* --- Footer --- */
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: linear-gradient(90deg, #000000, #000000);
+      color: #fff;
+      margin-top: 70px;
+      border-top-left-radius: 35px;
+      border-top-right-radius: 35px;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* --- Animations --- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="accuratelogo.png" alt="College Logo">
+    <h1>About Our College</h1>
+    <p>Shaping Future Leaders with Knowledge and Innovation</p>
+  </header>
+
+  <div class="container">
+    <body>
+  <div class="container">
+    <h1>About Us</h1>
+
+    <div class="card">
+      <h2>Our Project</h2>
+      <p>This website is designed as a <span class="highlight">Collage dashboard</span> for students and faculty. It allows students to post doubts, view faculty replies, and see notices and timetables. Faculty can manage doubts, upload notices, and provide course schedules in an organized and professional manner.</p>
+    </div>
+
+    <div class="card">
+      <h2>Technologies Used</h2>
+      <ul>
+        <li><span class="highlight">HTML5:</span> Structured all web pages, forms, and content sections.</li>
+        <li><span class="highlight">CSS3:</span> Styled the pages with responsive layouts, colors, shadows, and smooth user interface elements.</li>
+        <li><span class="highlight">JavaScript (ES6):</span> Added interactivity such as posting doubts, replies, reactions, notices, timetable management, and storing data locally.</li>
+        <li><span class="highlight">LocalStorage:</span> Used for storing notices, doubts, reactions, and timetable data persistently on the browser.</li>
+        <li><span class="highlight">Google Fonts:</span> Applied clean typography with the Inter font for a modern look.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Features</h2>
+      <ul>
+        <li>Student and Faculty login with personalized interaction.</li>
+        <li>Student doubt board with subject selection and teacher replies.</li>
+        <li>Faculty notice board with optional photo attachments.</li>
+        <li>Timetable upload and management for different courses and sections.</li>
+        <li>Interactive reactions (like/dislike) and sorting by popularity.</li>
+        <li>Responsive design for desktop and mobile devices.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Our Goal</h2>
+      <p>Our goal is to provide a <span class="highlight">smooth, user-friendly, and efficient platform</span> for students and faculty to manage doubts, notices, and schedules digitally. This project demonstrates the use of modern web technologies while keeping the interface simple and professional.</p>
+    </div>
+
+    <div class="card">
+      <h2>Contact</h2>
+      <p>If you have any queries or suggestions regarding this project, feel free to reach out via your college email or project discussion group.</p>
+    </div>
+  </div>
+</body>
+
+
+   
+  </div>
+
+  <footer>
+    <p>© <span>AIMT College portal</span> | All Rights Reserved to ANIMESH GANGWAR</p>
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </footer>
+</body>
+</html>]=
+\[

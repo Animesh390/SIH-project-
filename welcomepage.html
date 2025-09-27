@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      background: url("background.png") no-repeat center center/cover; /* 🔴 Animation ke time background image */
+      color: white;
+      text-align: center;
+      transition: background 1s ease, color 1s ease, box-shadow 0.6s ease, border 0.6s ease;
+    }
+
+    .box {
+      background: rgba(0,0,0,0.6);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      animation: zoomEffect 3s ease-in-out, fadeOut 1s ease forwards 3s; /* ⏳ 3 sec */
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    h1 { font-size: 2.2rem; margin-bottom: 10px; }
+    p { font-size: 1rem; }
+
+    @keyframes zoomEffect {
+      0% { transform: scale(0.7); opacity: 0; }
+      20% { transform: scale(1.05); opacity: 1; }
+      50% { transform: scale(0.95); }
+      80% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* 🔴 After animation background white */
+    body.white-bg {
+      background: #ffffff !important;
+      color: black;
+    }
+
+    /* 🔴 Red border with glowing shadow */
+    body.red-border {
+      border: 8px solid rgb(0, 0, 0);
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.9), inset 0 0 20px rgba(86, 173, 244, 0.8);
+      box-sizing: border-box;
+    }
+
+    .top-section {
+      display: none;
+      position: absolute;
+      top: 15px; left: 15px;
+      align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.7);
+      padding: 5px 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .top-section img { height: 28px; }
+    .top-section span { font-size: 0.9rem; font-weight: 700; color: #000; }
+    body.white-bg .top-section { display: flex; }
+
+    .logout-icon {
+      display: none;
+      position: absolute;
+      top: 15px; right: 15px;
+      font-size: 20px; color: #000;
+      cursor: pointer;
+    }
+    .logout-icon:hover::after { content: " Logout"; font-size: 12px; margin-left: 4px; }
+    body.white-bg .logout-icon { display: block; }
+
+    .portal-heading {
+      font-size: 1.6rem; font-weight: 800; color: #000;
+      display: none; position: absolute;
+      top: 55px; left: 50%; transform: translateX(-50%);
+    }
+    body.white-bg .portal-heading { display: block; }
+
+    .options-container {
+      display: none;
+      flex-direction: column;
+      gap: 25px;
+      margin-top: 12vh;
+      background: rgba(255,255,255,0.3);
+      border: 2px solid rgba(30,60,114,0.5);
+      border-radius: 16px;
+      padding: 25px 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      width: 90%; max-width: 950px;
+      margin-left: auto; margin-right: auto;
+      position: relative;
+    }
+    body.white-bg .options-container { display: flex; }
+
+    .options-title {
+      position: absolute;
+      top: -12px; left: 18%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 0 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #1e3c72;
+      border-radius: 8px;
+      border: 2px solid rgba(30,60,114,0.5);
+    }
+
+    .options-row {
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+    }
+
+    .option-box {
+      background: #f0f4ff;
+      border: 2px solid #1e3c72;
+      color: #1e3c72;
+      width: 120px;
+      height: 120px; 
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; text-decoration: none;
+    }
+    .option-box i { font-size: 26px; margin-bottom: 6px; color: #1e3c72; transition: color 0.3s ease; }
+
+    .option-box:hover {
+      background: #1e3c72;
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px #1e3c72, 0 0 20px rgba(30,60,114,0.5);
+    }
+    .option-box:hover i { color: #fff; }
+
+    footer {
+      margin-top: auto;
+      width: 100%;
+      background: #111;
+      padding: 12px 0;
+      text-align: center;
+      color: #fff;
+      font-size: 0.8rem;
+      border-top: 2px solid #1e3c72;
+    }
+    footer p { margin: 4px 0; }
+    footer span { font-weight: 700; }
+
+    .social-icons {
+      margin-top: 6px;
+    }
+    .social-icons a {
+      color: #fff;
+      margin: 0 18px;
+      font-size: 1.3rem;
+      position: relative;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .social-icons a::before {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(30,60,114,0.6), transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
+      z-index: -1;
+    }
+
+    .social-icons a:hover {
+      color: #1e3c72;
+      transform: scale(1.2) rotate(5deg);
+    }
+    .social-icons a:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    @media (max-width: 600px) {
+      .options-row { flex-wrap: wrap; gap: 12px; }
+      .option-box { width: 42%; height: 100px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Welcome to AIMT Portal 🎉</h1>
+    <p>You have successfully logged in.</p>
+  </div>
+
+  <div class="top-section">
+     <img src="accuratelogo.png" alt="Accurate Logo">
+    <span>ACCURATE SIM LOGIN</span>
+  </div>
+
+  <div class="logout-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+  <div class="portal-heading">Student Portal</div>
+
+  <div class="options-container">
+    <h2 class="options-title">Main Dashboard</h2>
+
+    <div class="options-row">
+      <a href="myprofile.html" class="option-box"><i class="fa-solid fa-calendar-check"></i>Profile</a>
+      <a href="attendence.html" class="option-box"><i class="fa-solid fa-id-card"></i>Attendance</a>
+      <a href="notice.html" class="option-box"><i class="fa-solid fa-file-lines"></i>Notice</a>
+      <a href="student_doubt.html" class="option-box"><i class="fa-solid fa-question-circle"></i>Doubt</a>
+    </div>
+
+    <div class="options-row">
+      <a href="admitcard.html" class="option-box"><i class="fa-solid fa-id-badge"></i>Admit Card</a>
+      <!-- 🔴 Queries icon changed -->
+     <!-- <a href="dues.html" class="option-box"><i class="fa-solid fa-circle-question"></i>Complaint</a>-->
+      <a href="dues.html" class="option-box"><i class="fa-solid fa-file-pen"></i></i></i>Complaint</a>
+      <a href="fees.html" class="option-box"><i class="fa-solid fa-credit-card"></i>pay & Fee updates</a>
+      <a href="marks.html" class="option-box"><i class="fa-solid fa-graduation-cap"></i>Marks</a>
+    </div>
+
+    <div class="options-row">
+      <a href="student-schedule.html" class="option-box"><i class="fa-solid fa-calendar-days"></i>Schedule</a>
+      <a href="events.html" class="option-box"><i class="fa-solid fa-champagne-glasses"></i>Events</a>
+      <a href="changepassward.html" class="option-box"><i class="fa-solid fa-key"></i>Change Password</a>
+      <a href="about.html" class="option-box"><i class="fa-solid fa-circle-info"></i>About Us</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© <span>AIMT College Portal</span> | All Rights Reserved to ANIMESH GANGWAR</p>
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    if (sessionStorage.getItem("visited")) {
+      document.body.classList.add("white-bg", "red-border");
+      document.querySelector(".box").style.display = "none"; 
+    } else {
+      setTimeout(() => {
+        document.body.classList.add("white-bg", "red-border");
+        document.querySelector(".box").remove(); 
+        sessionStorage.setItem("visited", "true"); 
+      }, 4000); // ⏳ 3 sec animation + 1 sec fadeOut
+    }
+
+    document.querySelector(".logout-icon").addEventListener("click", () => {
+      sessionStorage.removeItem("visited"); 
+      window.location.href = "login.html"; 
+    });
+  </script>
+</body>
+</html>

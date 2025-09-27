@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #f4f6f9;
+      color: #333;
+    }
+    .profile-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .profile-header {
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      padding: 40px 20px;
+      text-align: center;
+      color: #fff;
+    }
+    .profile-header img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 5px solid #fff;
+      margin-bottom: 15px;
+    }
+    .profile-header h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    .profile-header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    .section {
+      margin: 25px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .section h2 {
+      background: #4e54c8;
+      color: #fff;
+      padding: 10px 15px;
+      font-size: 18px;
+    }
+    .section table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .section table td {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    .section table tr:last-child td {
+      border-bottom: none;
+    }
+    .label {
+      font-weight: 600;
+      width: 30%;
+    }
+    @media (max-width: 768px) {
+      .profile-container {
+        margin: 20px;
+      }
+      .section table td {
+        display: block;
+        width: 100%;
+      }
+      .label {
+        margin-top: 8px;
+        display: inline-block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <img src="1000114391.jpg" alt="Profile Picture">
+      <h1>ANIMESH</h1>
+      <p></p>Profile</p>
+    </div>
+
+    <!-- Personal Information -->
+    <div class="section">
+      <h2>Personal Information</h2>
+      <table>
+        <tr><td class="label">Admission No:</td><td>24213140041</td></tr>
+        <tr><td class="label">Reg Form No:</td><td>351351313531</td></tr>
+        <tr><td class="label">Name:</td><td>Animesh</td></tr>
+        <tr><td class="label">Gender:</td><td>Male</td></tr>
+        <tr><td class="label">Blood Group:</td><td>A+</td></tr>
+        <tr><td class="label">DOB:</td><td>26/07/2007</td></tr>
+        <tr><td class="label">Present Address:</td><td></td></tr>
+        <tr><td class="label">City:</td><td></td></tr>
+        <tr><td class="label">State:</td><td>Uttar Pradesh</td></tr>
+        <tr><td class="label">Pin Code:</td><td>827930****</td></tr>
+        <tr><td class="label">Phone:</td><td>0</td></tr>
+        <tr><td class="label">Email:</td><td>banditxyz@gmail.com</td></tr>
+      </table>
+    </div>
+
+   <!-- Local Guardian Information 
+    <div class="section">
+      <h2>Local Guardian Information</h2>
+      <table>
+        <tr><td class="label">Local Guardian Name:</td><td>Ramesh</td></tr>
+        <tr><td class="label">Relation:</td><td>Uncle</td></tr>
+        <tr><td class="label">Phone:</td><td>9876543211</td></tr>
+      </table>
+    </div>
+    -->
+
+    <!-- Guardian Information -->
+    <div class="section">
+      <h2>Guardian Information</h2>
+      <table>
+        <tr><td class="label">Father Name:</td><td>Mr. Subhash Chandra Gangwar</td></tr>
+        <tr><td class="label">Father’s Mobile:</td><td>82793*****</td></tr>
+        <tr><td class="label">Mother Name:</td><td>Mrs. Sheela Devi</td></tr>
+        <tr><td class="label">Mother’s Mobile:</td><td>not provided</td></tr>
+        <tr><td class="label">Occupation:</td><td>Farmer</td></tr>
+        <!--<tr><td class="label">Annual Income:</td><td>60,000.00</td></tr>-->
+        <tr><td class="label">Permanent Address:</td><td>Green City Barielly</td></tr>
+        <tr><td class="label">City:</td><td>Barielly</td></tr>
+        <tr><td class="label">State:</td><td>Uttar Pradesh</td></tr>
+        <tr><td class="label">Pin Code:</td><td>262203</td></tr>
+        <tr><td class="label">Phone:</td><td>8279306041</td></tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Events</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    header {
+      background: #2e86de;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .add-btn {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    section {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #2e86de;
+      border-left: 5px solid #2e86de;
+      padding-left: 10px;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .event-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      position: relative;
+    }
+
+    .event-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .event-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: none;
+    }
+
+    .event-card img.active {
+      display: block;
+    }
+
+    .event-info {
+      padding: 15px;
+    }
+
+    .event-info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .event-info p {
+      margin: 10px 0 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+    }
+
+    .edit-btn, .delete-btn {
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .edit-btn {
+      background: #f39c12;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+    }
+
+    .close, .prev, .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      padding: 10px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 50%;
+    }
+
+    .close {
+      top: 20px;
+      right: 30px;
+      transform: none;
+      font-size: 2.5rem;
+    }
+
+    .prev {
+      left: 30px;
+    }
+
+    .next {
+      right: 30px;
+    }
+
+    .caption {
+      color: #fff;
+      margin-top: 15px;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    /* Add Event Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: #2e86de;
+    }
+
+    .modal-content input, 
+    .modal-content textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+
+    .modal-content button {
+      background: #2e86de;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+
+    .modal-content .cancel {
+      background: #e74c3c;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>College Events</h1>
+    <button class="add-btn" onclick="openModal()">+ Add New Event</button>
+  </header>
+
+  <!-- Past Events -->
+  <section>
+    <h2>Past Events</h2>
+    <div class="event-grid" id="past-events">
+      <div class="event-card">
+        <img src="past1a.jpg" alt="Cultural Fest" class="active">
+        <img src="past1b.jpg" alt="Cultural Fest">
+        <img src="past1c.jpg" alt="Cultural Fest">
+        <div class="event-info">
+          <h3>Cultural Fest 2024</h3>
+          <p>A grand celebration with music, dance and drama performances by students.</p>
+        </div>
+        <div class="action-buttons">
+          <button class="edit-btn" onclick="editEvent(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteEvent(this)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Events -->
+  <section>
+    <h2>Upcoming Events</h2>
+    <div class="event-grid" id="upcoming-events">
+      <div class="event-card">
+        <img src="hackathon.jpg" alt="Hackathon" class="active">
+       <!-- <img src="1000114391.jpg" alt="Hackathon" class="active">-->
+        <div class="event-info">
+          <h3>Inter-College Hackathon</h3>
+          <p>24-hour coding marathon to build innovative solutions.</p>
+        </div>
+        <div class="action-buttons">
+          <button class="edit-btn" onclick="editEvent(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteEvent(this)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <span class="prev" onclick="manualSlide(-1)">&#10094;</span>
+    <img id="lightbox-img" src="" alt="">
+    <span class="next" onclick="manualSlide(1)">&#10095;</span>
+    <div class="caption" id="caption"></div>
+  </div>
+
+  <!-- Add Event Modal -->
+  <div class="modal" id="eventModal">
+    <div class="modal-content">
+      <h2>Add New Event</h2>
+      <input type="text" id="eventTitle" placeholder="Event Title">
+      <textarea id="eventDesc" placeholder="Event Description"></textarea>
+      <!-- Multiple Image Upload -->
+      <input type="file" id="eventImg" accept="image/*" multiple>
+      <button onclick="saveEvent()">Save</button>
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // Auto slideshow setup for all event cards
+    function setupSlideshow(card) {
+      const imgs = card.querySelectorAll('img');
+      let index = 0;
+      if (imgs.length > 1) {
+        setInterval(() => {
+          imgs[index].classList.remove('active');
+          index = (index + 1) % imgs.length;
+          imgs[index].classList.add('active');
+        }, 3000);
+      }
+
+      card.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('edit-btn') && !e.target.classList.contains('delete-btn')) {
+          imgArray = Array.from(imgs);
+          if (imgArray.length > 0) openLightbox(0);
+        }
+      });
+    }
+
+    document.querySelectorAll('.event-card').forEach(setupSlideshow);
+
+    // Lightbox
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const captionText = document.getElementById("caption");
+    let imgArray = [];
+    let currentIndex = 0;
+    let slideshowInterval;
+
+    function openLightbox(index) {
+      currentIndex = index;
+      lightbox.style.display = "flex";
+      showSlide(currentIndex);
+      startSlideshow();
+    }
+
+    function closeLightbox() {
+      lightbox.style.display = "none";
+      stopSlideshow();
+    }
+
+    function startSlideshow() {
+      stopSlideshow();
+      slideshowInterval = setInterval(() => {
+        changeSlide(1);
+      }, 3000);
+    }
+
+    function stopSlideshow() {
+      clearInterval(slideshowInterval);
+    }
+
+    function changeSlide(n) {
+      currentIndex += n;
+      if (currentIndex >= imgArray.length) currentIndex = 0;
+      if (currentIndex < 0) currentIndex = imgArray.length - 1;
+      showSlide(currentIndex);
+    }
+
+    function manualSlide(n) {
+      changeSlide(n);
+      startSlideshow();
+    }
+
+    function showSlide(index) {
+      lightboxImg.src = imgArray[index].src;
+      captionText.innerHTML = imgArray[index].alt || "";
+    }
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Modal Functions
+    function openModal() {
+      document.getElementById("eventModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("eventModal").style.display = "none";
+    }
+
+    function saveEvent() {
+  const title = document.getElementById("eventTitle").value.trim();
+  const desc = document.getElementById("eventDesc").value.trim();
+  const fileInput = document.getElementById("eventImg");
+  const files = fileInput.files;
+
+  if (title && desc && files.length > 0) {
+    const newCard = document.createElement("div");
+    newCard.classList.add("event-card");
+
+    let imagesLoaded = 0;
+
+    Array.from(files).forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.alt = title;
+        if (idx === 0) img.classList.add("active");
+        newCard.appendChild(img);
+
+        imagesLoaded++;
+        // Once all images are loaded, setup slideshow
+        if (imagesLoaded === files.length) {
+          setupSlideshow(newCard);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const infoDiv = document.createElement("div");
+    infoDiv.classList.add("event-info");
+    infoDiv.innerHTML = `<h3>${title}</h3><p>${desc}</p>`;
+
+    const actions = document.createElement("div");
+    actions.classList.add("action-buttons");
+    actions.innerHTML = `
+      <button class="edit-btn" onclick="editEvent(this)">Edit</button>
+      <button class="delete-btn" onclick="deleteEvent(this)">Delete</button>
+    `;
+
+    newCard.appendChild(infoDiv);
+    newCard.appendChild(actions);
+
+    document.getElementById("upcoming-events").appendChild(newCard);
+    closeModal();
+
+    // Reset modal inputs
+    document.getElementById("eventTitle").value = "";
+    document.getElementById("eventDesc").value = "";
+    fileInput.value = "";
+  } else {
+    alert("Please fill all fields and select at least one image!");
+  }
+}
+
+
+    // Edit Event
+    function editEvent(btn) {
+      const card = btn.closest(".event-card");
+      const title = card.querySelector("h3");
+      const desc = card.querySelector("p");
+
+      const newTitle = prompt("Edit Title:", title.textContent);
+      const newDesc = prompt("Edit Description:", desc.textContent);
+
+      if (newTitle) title.textContent = newTitle;
+      if (newDesc) desc.textContent = newDesc;
+    }
+
+    // Delete Event
+    function deleteEvent(btn) {
+      const card = btn.closest(".event-card");
+      if (confirm("Are you sure you want to delete this event?")) card.remove();
+    }
+  </script>
+</body>
+</html>

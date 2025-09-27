@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Doubt Board</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent:#2563eb;
+      --accent2:#9333ea;
+      --teacher:#facc15;
+      --muted:#666;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Arial;background:#fff;color:#222;padding:20px;}
+    .container{max-width:900px;margin:0 auto;}
+    h1{text-align:center;font-size:28px;font-weight:800;margin-bottom:20px;color:var(--accent)}
+    .form{
+      display:flex;flex-direction:column;gap:10px;
+      background:#f9f9f9;padding:16px;border-radius:12px;border:1px solid #e5e5e5;margin-bottom:20px;
+    }
+    select,input,textarea,button{font-family:inherit;font-size:14px;padding:10px;border-radius:8px;border:1px solid #ccc;}
+    button{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;font-weight:600;cursor:pointer;border:none}
+    button:hover{opacity:0.9}
+    .doubt{border:1px solid #ddd;border-radius:12px;padding:14px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+    .doubt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .subject{font-size:13px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:6px;}
+    .reactions{display:flex;gap:10px;font-size:18px;cursor:pointer;user-select:none;}
+    .heart{color:#999;transition:0.2s}
+    .heart.active{color:red;}
+    .thumb{color:#999;transition:0.2s}
+    .thumb.active{color:#2563eb;}
+    .doubt h3{margin:0 0 6px;font-size:16px}
+    .doubt p{margin:0 0 8px;font-size:14px;color:#333}
+    .posted{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .replies{margin-top:10px;padding-left:10px;border-left:3px solid #eee;display:flex;flex-direction:column;gap:8px}
+    .reply{background:#fafafa;padding:8px 10px;border-radius:8px;font-size:14px}
+    .reply.teacher{background:#fffbe6;border:1px solid #facc15;font-weight:600}
+    .reply .meta{font-size:12px;color:var(--muted);margin-bottom:4px}
+    .reply-form{margin-top:10px;display:flex;gap:6px}
+    .reply-form input{flex:1}
+    .reply-form button{padding:8px 12px;font-size:13px}
+    .delete-btn{background:#dc2626;color:#fff;padding:6px 10px;margin-top:8px;border-radius:6px;cursor:pointer;border:none;}
+    .delete-btn:hover{opacity:0.9;background:#b91c1c;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Doubt Board</h1>
+
+    <form id="doubtForm" class="form">
+      <select id="subject" required>
+        <option value="">Select Subject</option>
+        <option value="Data Structure (DS)">Data Structure (DS)</option>
+        <option value="Computer Organization & Architec (COA)">Computer Organization & Architec (COA)</option>
+        <option value="Python Programing (PP)">Python Programing (PP)</option>
+        <option value="Technical Communication (TC)">Technical Communication (TC)</option>
+        <option value="Digital Electronic (DE)">Digital Electronic (DE)</option>
+        <option value="Mini Project (MP)">Mini Project (MP)</option>
+      </select>
+      <input type="text" id="title" placeholder="Enter doubt title" required>
+      <textarea id="desc" rows="3" placeholder="Describe your doubt" required></textarea>
+      <button type="submit">Post Doubt</button>
+    </form>
+
+    <div id="doubtsContainer"></div>
+  </div>
+
+  <script>
+    // Purane doubts clear
+    localStorage.removeItem('doubts');
+    localStorage.removeItem('reactions');
+
+    let doubts = [];
+    let reactions = {};
+    const currentUser = localStorage.getItem("currentUser") || "Guest";
+
+    const form=document.getElementById('doubtForm');
+    const container=document.getElementById('doubtsContainer');
+
+    form.addEventListener('submit',e=>{
+      e.preventDefault();
+      const sub=document.getElementById('subject').value;
+      const title=document.getElementById('title').value;
+      const desc=document.getElementById('desc').value;
+      if(!sub){alert("Please select a subject");return;}
+      doubts = doubts.filter(x=>x.subject.toLowerCase()!==sub.toLowerCase());
+      doubts.push({id:Date.now(),user:currentUser,subject:sub,title,desc,likes:0,dislikes:0,replies:[]});
+      localStorage.setItem('doubts',JSON.stringify(doubts));
+      form.reset();
+      render();
+    });
+
+    function addReply(id,text,byTeacher=false){
+      const d=doubts.find(x=>x.id===id);
+      if(!d) return;
+      d.replies.push({id:Date.now(),text,teacher:byTeacher,user:currentUser});
+      localStorage.setItem('doubts',JSON.stringify(doubts));
+      render();
+    }
+
+    function toggleReaction(id,type){
+      const d=doubts.find(x=>x.id===id);
+      if(!d) return;
+      const prev=reactions[id];
+      if(prev===type){
+        reactions[id]=null;
+        if(type==='like') d.likes--;
+        else d.dislikes--;
+      } else {
+        if(prev==='like') d.likes--;
+        if(prev==='dislike') d.dislikes--;
+        reactions[id]=type;
+        if(type==='like') d.likes++;
+        else d.dislikes++;
+      }
+      localStorage.setItem('doubts',JSON.stringify(doubts));
+      localStorage.setItem('reactions',JSON.stringify(reactions));
+      render();
+    }
+
+    // 🔥 Direct delete without popup
+    function deleteDoubt(id){
+      doubts=doubts.filter(x=>x.id!==id);
+      localStorage.setItem('doubts',JSON.stringify(doubts));
+      render();
+    }
+
+    function render(){
+      container.innerHTML='';
+      if(doubts.length===0){
+        container.innerHTML="<p>No doubts yet. Be the first to ask!</p>";
+        return;
+      }
+      doubts.sort((a,b)=>a.id-b.id);
+      doubts.forEach(d=>{
+        const liked=reactions[d.id]==='like';
+        const disliked=reactions[d.id]==='dislike';
+
+        const el=document.createElement('div');
+        el.className='doubt';
+        el.innerHTML=`
+          <div class="doubt-header">
+            <div class="subject">${d.subject}</div>
+            <div class="reactions">
+              <div class="heart ${liked?'active':''}" onclick="toggleReaction(${d.id},'like')">❤️ <span>${d.likes}</span></div>
+              <div class="thumb ${disliked?'active':''}" onclick="toggleReaction(${d.id},'dislike')">👎 <span>${d.dislikes}</span></div>
+            </div>
+          </div>
+          <div class="posted">Posted by: ${escapeHtml(d.user)}</div>
+          <h3>${escapeHtml(d.title)}</h3>
+          <p>${escapeHtml(d.desc)}</p>
+          <div class="replies" id="replies-${d.id}"></div>
+          <form class="reply-form" onsubmit="event.preventDefault();handleReply(${d.id},this)">
+            <input type="text" placeholder="Write a reply... (prefix with /t if teacher)" required>
+            <button type="submit">Reply</button>
+          </form>
+          <button class='delete-btn' onclick='deleteDoubt(${d.id})'>Delete</button>
+        `;
+        container.appendChild(el);
+
+        const repliesDiv=el.querySelector(`#replies-${d.id}`);
+        let replies=[...d.replies];
+        replies.sort((a,b)=>{
+          if(a.teacher && !b.teacher) return -1;
+          if(!a.teacher && b.teacher) return 1;
+          return a.id-b.id;
+        });
+        replies.forEach(r=>{
+          const rep=document.createElement('div');
+          rep.className='reply'+(r.teacher?' teacher':'');
+
+          rep.innerHTML=`<div class="meta">${r.teacher?'Teacher':'Student'} (${escapeHtml(r.user)})</div>${escapeHtml(r.text)}`;
+          repliesDiv.appendChild(rep);
+        });
+      });
+    }
+
+    function handleReply(doubtId,form){
+      const input=form.querySelector('input');
+      let text=input.value.trim();
+      if(!text) return;
+      let isTeacher=false;
+      if(text.startsWith('/t ')){
+        text=text.slice(3);
+        isTeacher=true;
+      }
+      addReply(doubtId,text,isTeacher);
+      input.value='';
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+
+    render();
+  </script>
+</body>
+</html>

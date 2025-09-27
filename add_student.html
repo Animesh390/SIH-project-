@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Students</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(to bottom right, #87ceeb, #ffffff); margin:0; padding:20px; display:flex; flex-direction:column; align-items:center;}
+h2 { color:#0d47a1; text-align:center; margin-bottom:20px; }
+.form-popup { background:#ffffffdd; padding:25px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.2); width:90%; max-width:800px; margin-bottom:30px; display:flex; flex-direction:column; gap:20px;}
+.form-section { display:flex; flex-direction:column; gap:10px; }
+.form-section h3 { color:#0d47a1; margin-bottom:10px; border-bottom:1px solid #2563eb; padding-bottom:4px;}
+.form-section input, .form-section select, .form-section textarea { padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; font-size:14px;}
+textarea { resize: vertical;}
+.profile-pic { display:flex; flex-direction:column; align-items:center; margin-bottom:20px; position:relative;}
+.profile-pic img { width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid #2563eb; transition: all 0.3s; }
+.profile-pic img:hover { transform: scale(1.05); box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+.profile-pic span { position:absolute; bottom:-20px; font-weight:bold; color:#0d47a1; font-size:16px; text-align:center; width:100%; }
+.profile-pic button { padding:6px 12px; border:none; border-radius:8px; background:#2563eb; color:white; cursor:pointer; margin-top:5px; }
+.profile-pic button:hover { background:#1d4ed8; transform: scale(1.05);}
+.submit-btn { padding:12px; background:#16a34a; color:white; border:none; border-radius:10px; cursor:pointer; font-size:16px; transition: all 0.3s; margin-top:10px;}
+.submit-btn:hover { background:#15803d; transform: scale(1.05); box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+.success-popup { position:fixed; top:20px; right:20px; background:#16a34a; color:white; padding:12px 18px; border-radius:8px; display:none; z-index:1000; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+@media (max-width:768px){ .form-popup{width:95%;} }
+</style>
+</head>
+<body>
+
+<h2>➕ Add / Edit Student</h2>
+
+<div class="form-popup" id="studentForm">
+  <div class="profile-pic">
+    <img id="profilePreview" src="default-user.png" />
+    <span id="profileName">Student Name</span>
+    <input type="file" id="profilePic" accept="image/*" style="display:none;">
+    <button type="button" onclick="document.getElementById('profilePic').click()">Upload Photo</button>
+  </div>
+
+  <div class="form-section">
+    <h3>Student Details</h3>
+    <select id="courseSelect" required>
+      <option value="" disabled selected>Select Course</option>
+      <option>B.Tech</option>
+      <option>BCA</option>
+      <option>MCA</option>
+      <option>MBA</option>
+    </select>
+    <select id="branchSelect" required>
+      <option value="" disabled selected>Select Branch</option>
+      <option>CSE</option>
+      <option>ECE</option>
+      <option>Mechanical</option>
+      <option>Civil</option>
+    </select>
+    <select id="yearSelect" required>
+      <option value="" disabled selected>Select Joining Year</option>
+    </select>
+    <select id="semesterSelect" required>
+      <option value="" disabled selected>Select Semester</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>Passout</option>
+    </select>
+    <input type="text" placeholder="Name (Mandatory)" required>
+    <input type="text" placeholder="Roll Number (Mandatory)" required>
+    <input type="text" placeholder="Admission Number">
+    <input type="email" placeholder="Gmail (Mandatory)" required>
+    <input type="date" placeholder="Date of Birth (Mandatory)" required>
+    <input type="text" placeholder="Blood Group">
+    <input type="text" placeholder="Phone Number (Mandatory)" required>
+    <input type="text" placeholder="Section">
+  </div>
+
+  <div class="form-section">
+    <h3>Parent Details</h3>
+    <input type="text" placeholder="Father Name">
+    <input type="text" placeholder="Mother Name">
+    <input type="text" placeholder="Contact">
+    <input type="text" placeholder="Profession">
+  </div>
+
+  <div class="form-section">
+    <h3>Address</h3>
+    <textarea placeholder="Permanent Address"></textarea>
+    <textarea placeholder="Present Address"></textarea>
+  </div>
+
+  <button class="submit-btn" id="saveBtn">Save Student</button>
+</div>
+
+<div class="success-popup" id="successPopup">Student Saved Successfully!</div>
+
+<script>
+const currentYear = new Date().getFullYear();
+const yearSelect = document.getElementById('yearSelect');
+for(let y=currentYear; y>=2000; y--){ const opt=document.createElement('option'); opt.value=y; opt.textContent=y; yearSelect.appendChild(opt);}
+
+// Profile pic
+const profileInput = document.getElementById('profilePic');
+const profilePreview = document.getElementById('profilePreview');
+const profileName = document.getElementById('profileName');
+profileInput.addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(file){ const reader=new FileReader(); reader.onload=e=>profilePreview.src=e.target.result; reader.readAsDataURL(file);}
+});
+
+// Name change
+const nameInput = document.querySelector('input[placeholder="Name (Mandatory)"]');
+nameInput.addEventListener('input', ()=>{ profileName.textContent=nameInput.value||"Student Name"; });
+
+// Section visibility
+const semesterSelect = document.getElementById('semesterSelect');
+const sectionInput = document.querySelector('input[placeholder="Section"]');
+semesterSelect.addEventListener('change', ()=>{
+  if(semesterSelect.value === "Passout"){ sectionInput.style.display="none"; }
+  else{ sectionInput.style.display="block"; }
+});
+
+// Storage
+const STORAGE_KEY='students_list_v1';
+let editRoll=null;
+
+function readStudents(){ try{ const raw=localStorage.getItem(STORAGE_KEY); return raw?JSON.parse(raw):[];}catch(e){return[];}}
+function writeStudents(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list));}
+
+// Success popup
+function showSuccess(){ const popup=document.getElementById('successPopup'); popup.style.display='block'; setTimeout(()=>popup.style.display='none',1500); }
+
+// Save student
+document.getElementById('saveBtn').addEventListener('click', e=>{
+  e.preventDefault();
+  const form=document.getElementById('studentForm');
+  const inputs=form.querySelectorAll('input, select, textarea');
+  let student={ photo: profilePreview.src };
+  inputs.forEach(inp=>{ if(inp.placeholder) student[inp.placeholder]=inp.value; else student[inp.id]=inp.value; });
+  student['semester'] = semesterSelect.value;
+
+  if(!student['Name (Mandatory)']||!student['Roll Number (Mandatory)']||!student['Gmail (Mandatory)']||!student['Date of Birth (Mandatory)']||!student['Phone Number (Mandatory)']||!document.getElementById('courseSelect').value||!document.getElementById('branchSelect').value||!document.getElementById('yearSelect').value||!semesterSelect.value){
+    alert('Please fill all mandatory fields'); return;
+  }
+
+  let students=readStudents();
+
+  if(editRoll){ // Editing
+    students=students.map(s=>s['Roll Number (Mandatory)']===editRoll ? student : s);
+    editRoll=null;
+  }else{ // Adding
+    if(students.some(s=>s['Roll Number (Mandatory)']===student['Roll Number (Mandatory)'])){ alert('Roll number already exists!'); return; }
+    students.push(student);
+  }
+
+  writeStudents(students);
+  showSuccess();
+
+  form.reset(); profilePreview.src='default-user.png'; profileName.textContent='Student Name'; sectionInput.style.display="block";
+});
+</script>
+</body>
+</html>

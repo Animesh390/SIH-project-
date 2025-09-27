@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dues Update - Faculty Portal</title>
+  <style>
+    :root{--bg:#f5f7fb;--card:#ffffff;--muted:#6b7280;--accent:#2563eb}
+    *{box-sizing:border-box;font-family:Inter, 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif}
+    body{margin:0;background:var(--bg);color:#111}
+    .container{max-width:980px;margin:36px auto;padding:20px}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{font-size:20px;margin:0}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .row{display:flex;gap:12px;align-items:center}
+    .controls{display:flex;gap:12px;flex-wrap:wrap}
+    input[type=file]{display:none}
+    .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
+    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(37,99,235,0.12)}
+    .drop-area{margin-top:12px;padding:22px;border-radius:8px;border:2px dashed rgba(17,24,39,0.06);text-align:center;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:16px}
+    th,td{padding:8px 10px;border-bottom:1px solid #eef2ff;text-align:left;font-size:14px}
+    th{background:#fbfdff;font-weight:600}
+    .preview-actions{display:flex;gap:8px;align-items:center;margin-top:12px}
+    .small{font-size:13px;color:var(--muted)}
+    .success{color:green;margin-top:10px}
+    .error{color:#b91c1c;margin-top:10px}
+    .input-inline{padding:8px;border-radius:8px;border:1px solid #e6edf8}
+    .flex-right{margin-left:auto}
+    @media(max-width:640px){.row{flex-direction:column;align-items:stretch}.controls{justify-content:flex-start}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><rect rx='8' width='36' height='36' fill='%232563eb'/><text x='50%' y='55%' font-size='18' text-anchor='middle' fill='white' font-family='Arial' font-weight='600'>D</text></svg>" alt="logo">
+      <h1>Dues Update — Faculty Portal</h1>
+    </header>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="small">CSV template format (required columns):</div>
+          <div class="small">student_id, name, class, email, dues_amount, due_date</div>
+        </div>
+        <div class="flex-right">
+          <button id="downloadTemplate" class="btn secondary">Download Template</button>
+          <label class="btn" for="fileInput">Upload CSV</label>
+          <input id="fileInput" type="file" accept=".csv" />
+        </div>
+      </div>
+
+      <div id="dropArea" class="drop-area">Ya phir yahan CSV drag & drop karo</div>
+
+      <div id="message" class="small"></div>
+
+      <div id="preview" style="display:none;">
+        <div class="preview-actions">
+          <div class="row" style="gap:8px;align-items:center">
+            <label class="small">Selected rows:</label>
+            <input id="selectAll" type="checkbox" />
+            <label for="selectAll" class="small">Select All</label>
+            <input id="setDuesInput" class="input-inline" placeholder="Set dues amount for selected" />
+            <button id="applyDues" class="btn secondary">Apply</button>
+          </div>
+          <div class="flex-right">
+            <button id="sendToServer" class="btn">Upload to Server</button>
+          </div>
+        </div>
+
+        <table id="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Email</th>
+              <th>Dues</th>
+              <th>Due Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div id="result" class="small"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Utility: CSV -> array of objects (simple parser, assumes no quoted commas)
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      if(lines.length === 0) return {error: 'Empty file'};
+      const headers = lines[0].split(',').map(h=>h.trim());
+      const rows = lines.slice(1).map((l,i)=>{
+        const cols = l.split(',').map(c=>c.trim());
+        const obj = {};
+        headers.forEach((h, idx)=> obj[h] = cols[idx] ?? '');
+        return obj;
+      });
+      return {headers, rows};
+    }
+
+    // Elements
+    const fileInput = document.getElementById('fileInput');
+    const dropArea = document.getElementById('dropArea');
+    const preview = document.getElementById('preview');
+    const tbody = document.querySelector('#table tbody');
+    const message = document.getElementById('message');
+    const result = document.getElementById('result');
+    const downloadTemplate = document.getElementById('downloadTemplate');
+    const setDuesInput = document.getElementById('setDuesInput');
+    const applyDues = document.getElementById('applyDues');
+    const sendToServer = document.getElementById('sendToServer');
+    const selectAll = document.getElementById('selectAll');
+
+    let currentRows = [];
+
+    function showMessage(text, isError){ message.textContent = text; message.className = isError ? 'error' : 'small'; }
+
+    // Template download
+    downloadTemplate.addEventListener('click', ()=>{
+      const header = 'student_id,name,class,email,dues_amount,due_date\n';
+      const sample = 'S101,Animesh Gangwar,BSc-1,animesh@example.com,0,2025-10-01\nS102,Rekha Sharma,BSc-1,rekha@example.com,0,2025-10-01\n';
+      const blob = new Blob([header+sample], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'dues_template.csv'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    // File read handler
+    function handleFile(file){
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const text = e.target.result;
+        const parsed = parseCSV(text);
+        if(parsed.error){ showMessage(parsed.error, true); return; }
+        currentRows = parsed.rows.map((r, idx)=>({...r,_idx:idx, _selected:false}));
+        renderTable();
+        preview.style.display = 'block';
+        showMessage(currentRows.length + ' students loaded. Table ready.');
+      };
+      reader.readAsText(file);
+    }
+
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files[0]; if(!f) return; handleFile(f);
+      fileInput.value = '';
+    });
+
+    // Drag & drop
+    ['dragenter','dragover'].forEach(ev=> dropArea.addEventListener(ev, e=>{ e.preventDefault(); dropArea.style.borderColor = '#cbd5e1'; }));
+    ['dragleave','drop'].forEach(ev=> dropArea.addEventListener(ev, e=>{ e.preventDefault(); dropArea.style.borderColor = ''; }));
+    dropArea.addEventListener('drop', e=>{
+      const f = e.dataTransfer.files[0]; if(!f) return; handleFile(f);
+    });
+
+    // Render table
+    function renderTable(){
+      tbody.innerHTML = '';
+      currentRows.forEach((r, i)=>{
+        const tr = document.createElement('tr');
+        const tdSel = document.createElement('td');
+        const chk = document.createElement('input'); chk.type = 'checkbox'; chk.checked = r._selected;
+        chk.addEventListener('change', ()=>{ r._selected = chk.checked; updateSelectAll(); });
+        tdSel.appendChild(chk);
+        tr.appendChild(tdSel);
+        ['student_id','name','class','email','dues_amount','due_date'].forEach(k=>{
+          const td = document.createElement('td'); td.textContent = r[k] ?? ''; tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      updateSelectAll();
+    }
+
+    function updateSelectAll(){
+      const total = currentRows.length;
+      const selected = currentRows.filter(r=>r._selected).length;
+      selectAll.checked = total>0 && selected===total;
+    }
+
+    selectAll.addEventListener('change', ()=>{
+      const checked = selectAll.checked; currentRows.forEach(r=> r._selected = checked); renderTable();
+    });
+
+    // Apply dues to selected rows
+    applyDues.addEventListener('click', ()=>{
+      const v = setDuesInput.value.trim(); if(v===''){ showMessage('Amount dalen (e.g., 1500)', true); return; }
+      const num = Number(v);
+      if(isNaN(num)){ showMessage('Valid number dalen', true); return; }
+      let changed = 0;
+      currentRows.forEach(r=>{ if(r._selected){ r.dues_amount = String(num); changed++; } });
+      renderTable();
+      showMessage(changed + ' records updated.');
+    });
+
+    // Send to server (placeholder)
+    sendToServer.addEventListener('click', async ()=>{
+      if(currentRows.length===0){ showMessage('Koi data upload nahi hai', true); return; }
+      const payload = currentRows.map(({_idx,_selected,...rest})=>rest);
+      result.textContent = 'Uploading...';
+      try{
+        // Replace URL with your server endpoint
+        const resp = await fetch('/api/dues/upload', {
+          method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({students: payload})
+        });
+        if(!resp.ok) throw new Error('Server returned ' + resp.status);
+        const data = await resp.json();
+        result.textContent = 'Server response: ' + (data.message || 'Upload successful');
+      }catch(err){ result.textContent = 'Upload failed — ' + err.message; }
+    });
+
+    // Optional: help text
+    showMessage('CSV upload ke liye "Download Template" use karo ya apna CSV drag & drop karo.');
+  </script>
+</body>
+</html>

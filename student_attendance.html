@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Attendance</title>
+  <style>
+    /* Body & Background */
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      padding: 20px; 
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #b3e5fc, #ffffff 70%, #d9f7be 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 { 
+      text-align: center; 
+      margin-bottom: 25px;
+      color: #1e3a8a;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* Table Styling */
+    table {
+      width: 90%;
+      max-width: 700px;
+      border-collapse: separate;
+      border-spacing: 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffffdd;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    table:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: linear-gradient(135deg, #007bff, #00aaff);
+      color: white;
+      font-size: 16px;
+    }
+
+    tr:nth-child(even) td {
+      background: #f1f9ff;
+    }
+
+    tr:hover td {
+      background: #d0e7ff;
+      transition: background 0.3s;
+    }
+
+    /* Optional: add subtle rounded corners to first & last cells */
+    th:first-child { border-top-left-radius: 12px; }
+    th:last-child { border-top-right-radius: 12px; }
+    tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+    tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+  </style>
+</head>
+<body>
+  <h2 id="studentName">Attendance Record</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Attendance</th>
+      </tr>
+    </thead>
+    <tbody id="attendanceTable"></tbody>
+  </table>
+
+  <script>
+    // Get roll number from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const roll = urlParams.get('roll');
+
+    // Example student subjects attendance
+    const subjects = [
+      { subject: "Mathematics", attendance: "18/20" },
+      { subject: "Chemistry", attendance: "15/20" },
+      { subject: "Physics", attendance: "17/20" },
+      { subject: "Electronics", attendance: "20/20" },
+      { subject: "Mechanics", attendance: "14/20" },
+      { subject: "English", attendance: "19/20" }
+    ];
+
+    document.getElementById("studentName").textContent = `Attendance Record - Student ${roll}`;
+    const table = document.getElementById("attendanceTable");
+    subjects.forEach(sub => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${sub.subject}</td><td>${sub.attendance}</td>`;
+      table.appendChild(row);
+    });
+  </script>
+</body>
+</html>

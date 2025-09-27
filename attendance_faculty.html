@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance System</title>
+  <link rel="stylesheet" href="attendence_style.css">
+</head>
+<body>
+  <h2>📋 Attendance Management System</h2>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <button onclick="showSection('attendance')">🧾 Attendance</button>
+    <button onclick="showSection('today')">✅ Today's Attendance</button>
+  </div>
+
+  <!-- Attendance Section -->
+  <div id="attendance" class="section">
+    <div class="filters">
+      <select id="attCourse" onchange="loadAttendanceList()">
+        <option value="">Course</option>
+        <option>B.Tech</option>
+        <option>BCA</option>
+        <option>MCA</option>
+        <option>MBA</option>
+      </select>
+      <select id="attSemester" onchange="loadAttendanceList()">
+        <option value="">Semester</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+      </select>
+      <select id="attSection" onchange="loadAttendanceList()">
+        <option value="">Section</option>
+        <option>A</option><option>B</option><option>C</option>
+        <option>D</option><option>E</option><option>F</option><option>G</option>
+      </select>
+    </div>
+    <div class="student-list" id="attendanceList"></div>
+  </div>
+
+  <!-- Today's Attendance Section -->
+  <div id="today" class="section">
+    <div class="filters">
+      <select id="course" onchange="loadTodayStudents()">
+        <option value="">Course</option>
+        <option>B.Tech</option>
+        <option>BCA</option>
+        <option>MCA</option>
+        <option>MBA</option>
+      </select>
+      <select id="semester" onchange="loadTodayStudents()">
+        <option value="">Semester</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+      </select>
+      <select id="section" onchange="loadTodayStudents()">
+        <option value="">Section</option>
+        <option>A</option><option>B</option><option>C</option>
+        <option>D</option><option>E</option><option>F</option><option>G</option>
+      </select>
+      <select id="subject" onchange="loadTodayStudents()">
+        <option value="">Subject</option>
+        <option>Mathematics</option>
+        <option>Chemistry</option>
+        <option>Physics</option>
+        <option>Electronics</option>
+        <option>Mechanics</option>
+        <option>English</option>
+      </select>
+    </div>
+
+    <!-- Date & Time -->
+    <div class="date-block">
+      <input type="date" id="attendanceDate">
+      <div class="clock" id="clock">⏰</div>
+    </div>
+
+    <div class="student-list" id="todayList"></div>
+  </div>
+
+  <script src="attendence_student.js"></script>
+</body>
+</html>

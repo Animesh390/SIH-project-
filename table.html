@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time Table — Section 2G (II Year)</title>
+  <style>
+    :root{
+      --primary:#2e3b55;
+      --accent:#ff9800;
+      --bg:#f4f6fb;
+      --paper:#ffffff;
+      --muted:#666;
+    }
+
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color:#111;
+    }
+
+    .page {
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    header.app-header{
+      width:100%;
+      background:var(--primary);
+      color:#fff;
+      padding:18px 12px;
+      text-align:center;
+    }
+    header.app-header h1{
+      margin:0;
+      font-size:25px;
+    }
+    header.app-header p {
+      margin:4px 0 0;
+      font-size:15px;
+      opacity:0.95;
+    }
+
+    main.content {
+      width:100%;
+      max-width:1000px;
+      margin:15px auto;
+      padding:8px;
+    }
+
+    .card {
+      background:var(--paper);
+      border-radius:8px;
+      padding:8px;
+      box-shadow:0 4px 12px rgba(30,40,60,0.08);
+    }
+
+    /* Timetable */
+    table.timetable{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+      font-size:13px;
+      line-height:1.2;
+    }
+    table.timetable thead th{
+      background:var(--primary);
+      color:#fff;
+      padding:6px;
+      font-weight:600;
+      font-size:11px;
+      border:1px solid rgba(0,0,0,0.06);
+    }
+    table.timetable tbody td{
+      padding:6px;
+      border:1px solid rgba(0,0,0,0.06);
+      text-align:center;
+      vertical-align:middle;
+    }
+    .day-col {
+      width:80px;
+      font-weight:600;
+      background:#f7f9fc;
+    }
+
+    /* Codes table */
+    .codes {
+      margin-top:16px;
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+    .codes th, .codes td {
+      border:1px solid rgba(0,0,0,0.06);
+      padding:6px;
+    }
+    .codes th {
+      background:#f2f4f8;
+      text-align:left;
+    }
+
+    /* Buttons */
+    .actions {
+      width:100%;
+      max-width:1000px;
+      display:flex;
+      justify-content:center;
+      margin:20px auto 40px;
+      gap:10px;
+    }
+    .btn {
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      padding:8px 14px;
+      font-size:13px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn.secondary { background:#6c757d; }
+
+    /* Print */
+    @media print {
+      @page { size: landscape; margin: 8mm; }
+      body { background:#fff; zoom:40%; } /* thoda chhota kar diya */
+      .actions { display:none; }
+      .card { box-shadow:none; border-radius:0; padding:4px; }
+
+      /* Prevent page break inside tables */
+      table, tr, td, th {
+        page-break-inside: avoid !important;
+      }
+      table.timetable, table.codes {
+        page-break-before: avoid;
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="app-header">
+      <h1>ACCUURATE INSTITUTE OF MANAGEMENT &amp; TECHNOLOGY — Time Table</h1>
+      <p>Section: 2G | II Year, Odd Semester (Session 2025-26) — Room No. 110 | W.E.F.: 17/09/2025</p>
+    </header>
+
+    <main class="content">
+      <div class="card">
+        <!-- Timetable -->
+        <table class="timetable">
+          <thead>
+            <tr>
+              <th>Day / Time</th>
+              <th>I<br><small>09:30–10:20</small></th>
+              <th>II<br><small>10:20–11:10</small></th>
+              <th>III<br><small>11:10–12:00</small></th>
+              <th>IV<br><small>12:00–12:50</small></th>
+              <th>V<br><small>12:50–01:40</small></th>
+              <th>VI<br><small>01:40–02:30</small></th>
+              <th>VII<br><small>02:30–03:20</small></th>
+              <th>VIII<br><small>03:20–04:10</small></th>
+              <th>IX<br><small>04:10–05:00</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="day-col">MON</td><td>TC</td><td>PP</td><td>DS</td><td>DE</td><td>—</td><td>DS LAB G2</td><td>MP G1 (110)</td><td>COA</td><td>DSTL</td></tr>
+            <tr><td class="day-col">TUE</td><td>DSTL</td><td>DE</td><td>COA</td><td>DS</td><td>—</td><td>MP G2 (110)</td><td>SPORT G2</td><td>WDW LAB G2</td><td>TC / LIBRARY</td></tr>
+            <tr><td class="day-col">WED</td><td>COA</td><td>DSTL</td><td>DS LAB G1</td><td>—</td><td>MP G2 (110)</td><td>DE</td><td>COA LAB G2</td><td>COA</td><td>DS</td></tr>
+            <tr><td class="day-col">THU</td><td>DSTL</td><td>COA</td><td>DS</td><td>PP</td><td>—</td><td>SPORT G1</td><td>WDW LAB G2</td><td>COA LAB G1</td><td>MP G1 (110)</td></tr>
+            <tr><td class="day-col">FRI</td><td>DS</td><td>PP</td><td>COA</td><td>TC</td><td>—</td><td>DE</td><td>DSTL</td><td>MP G2 (110)</td><td>Library</td></tr>
+            <tr><td class="day-col">SAT</td><td>PP</td><td>DSTL</td><td>DS</td><td>DE</td><td>—</td><td>TC</td><td>Library</td><td>Activity IQAC</td><td>Activity IQAC</td></tr>
+          </tbody>
+        </table>
+
+        <!-- Codes -->
+        <table class="codes">
+          <thead>
+            <tr>
+              <th>Code</th><th>Abbr.</th><th>Subject Name</th><th>L</th><th>T</th><th>P</th><th>Faculty Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>BCS301</td><td>DS</td><td>Data Structure</td><td>6</td><td>0</td><td>0</td><td>Ms. Sweta</td></tr>
+            <tr><td>BCS302</td><td>COA</td><td>Computer Organization &amp; Architecture</td><td>5</td><td>0</td><td>0</td><td>Ms. Rashi</td></tr>
+            <tr><td>BCS303</td><td>DSTL</td><td>Discrete Structures &amp; Theory of Logic</td><td>4</td><td>0</td><td>0</td><td>Mr. Neeraj</td></tr>
+            <tr><td>BCC301</td><td>PP</td><td>Python Programming</td><td>4</td><td>0</td><td>0</td><td>Mr. Jai Shukla</td></tr>
+            <tr><td>BAS301</td><td>TC</td><td>Technical Communication</td><td>4</td><td>0</td><td>0</td><td>Ms. Anjali</td></tr>
+            <tr><td>BOE310</td><td>DE</td><td>Digital Electronics</td><td>4</td><td>0</td><td>0</td><td>Dr. Nitin Tyagi</td></tr>
+            <tr><td>BCS351</td><td>DS LAB</td><td>Data Structure Lab</td><td>0</td><td>0</td><td>4</td><td>Ms. Sweta</td></tr>
+            <tr><td>BCS352</td><td>COA LAB</td><td>Computer Organization &amp; Architecture Lab</td><td>0</td><td>0</td><td>4</td><td>Ms. Rashi</td></tr>
+            <tr><td>BCS353</td><td>WDW LAB</td><td>Web Designing Workshop Lab</td><td>0</td><td>0</td><td>4</td><td>Ms. Sweta</td></tr>
+            <tr><td>BCS351</td><td>MP</td><td>Mini Project</td><td>0</td><td>0</td><td>4</td><td>Ms. Sweta</td></tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:12px; font-size:12px; color:var(--muted)">
+          <strong>Time Table In-Charge:</strong> Ms. Sweta |
+          <strong>Mentors:</strong> Ms. Sweta, Ms. Rashi |
+          <strong>HOD:</strong> Dr. Nitin Tyagi
+        </div>
+      </div>
+    </main>
+
+    <div class="actions">
+      <button class="btn" onclick="window.print()">🖨️ Print / Save</button>
+      <button class="btn secondary" onclick="downloadHTML()">📥 Download HTML</button>
+    </div>
+  </div>
+
+  <script>
+    function downloadHTML(){
+      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'timetable_section_2G.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

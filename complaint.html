@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Complaints Portal</title>
+  <style>
+    :root{--bg:#f4f7fb;--card:#ffffff;--accent:#2b6cb0;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);margin:0;padding:20px;color:#0f172a}
+    .container{max-width:800px;margin:0 auto}
+
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header .logo{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#06b6d4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    header h1{font-size:20px;margin:0}
+    header p{margin:0;color:var(--muted);font-size:13px}
+
+    .user-badge{font-size:13px;color:#0f172a;opacity:0.9}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06);margin-bottom:16px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:#0f172a}
+    input[type=text], textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6edf3;outline:none;font-size:14px}
+    textarea{min-height:110px;resize:vertical}
+    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+    button{cursor:pointer;padding:10px 12px;border-radius:8px;border:0;font-weight:600}
+    .btn-primary{background:var(--accent);color:white}
+    .btn-ghost{background:transparent;border:1px solid #e6edf3}
+
+    ul.complaints{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+    .complaint{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:10px;border:1px solid #eef2f6;background:var(--card)}
+    .meta{flex:1}
+    .meta h3{margin:0;font-size:15px}
+    .meta p{margin:6px 0;color:var(--muted);font-size:13px}
+    .meta .info{font-size:12px;color:#475569}
+    .ctrls{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center}
+    .tick{font-size:20px;color:#10b981}
+    .small{font-size:12px;padding:6px 8px;border-radius:8px;border:0;cursor:pointer}
+    .btn-delete{background:#ef4444;color:white}
+    .btn-resolve{background:#10b981;color:white}
+
+    .empty{padding:30px;text-align:center;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <!--<div class="container">-->
+    <header>
+      <div class="logo"><img src="accuratelogo.png" alt="College Logo" style="width:100%;height:100%;object-fit:contain;border-radius:8px"/></div>
+      <div style="flex:1">
+        <h1>Student Complaints Portal</h1>
+        <p>Students can post complaints here.</p>
+      </div>
+      <div class="user-badge" id="userBadge">Not signed in</div>
+    </header>
+
+    <!-- Complaint Form -->
+    <section class="card">
+      <h2 style="margin:0 0 10px 0;font-size:16px">Post a Complaint</h2>
+      <form id="complaintForm">
+        <label for="subject">Title</label>
+        <input type="text" id="subject" placeholder="Enter complaint title" required />
+
+        <label for="details" style="margin-top:10px">Description</label>
+        <textarea id="details" placeholder="Describe the issue..." required></textarea>
+
+        <div class="actions">
+          <button type="button" class="btn-ghost" id="clearBtn">Clear</button>
+          <button type="submit" class="btn-primary">Post Complaint</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Complaint List -->
+    <section class="card">
+      <h3 style="margin:0 0 10px 0">Complaints</h3>
+      <ul class="complaints" id="complaintsList"></ul>
+      <div id="emptyState" class="empty" style="display:none">No complaints yet. Post one using the form above.</div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'college_complaints_simple';
+    const form = document.getElementById('complaintForm');
+    const complaintsList = document.getElementById('complaintsList');
+    const emptyState = document.getElementById('emptyState');
+    const userBadge = document.getElementById('userBadge');
+    let complaints = [];
+    let currentUser = null;
+
+    function guessLoggedUser(){
+      const keysToTry = ['currentUser','loggedInUser','user','username','loginUser','authUser'];
+      for(const k of keysToTry){
+        const raw = localStorage.getItem(k);
+        if(!raw) continue;
+        try{
+          const v = JSON.parse(raw);
+          if(typeof v === 'object' && (v.name || v.username || v.fullName)) return {name: v.name || v.username || v.fullName};
+          if(typeof v === 'string') return {name: v};
+        }catch(e){ return {name: raw}; }
+      }
+      return null;
+    }
+
+    function load() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      complaints = raw ? JSON.parse(raw) : [];
+      currentUser = guessLoggedUser();
+      userBadge.textContent = currentUser ? `Signed in: ${currentUser.name}` : 'Not signed in';
+      render();
+    }
+
+    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints)); }
+    function uid(){ return 'c_'+Date.now()+'_'+Math.floor(Math.random()*9000); }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const subject = document.getElementById('subject').value.trim();
+      const details = document.getElementById('details').value.trim();
+      const complain = {
+        id:uid(),
+        subject,
+        details,
+        createdAt:new Date().toISOString(),
+        resolved:false,
+        author: currentUser ? currentUser.name : 'Anonymous'
+      };
+      complaints.unshift(complain);
+      save();
+      render();
+      form.reset();
+    });
+
+    function render(){
+      complaintsList.innerHTML = '';
+      if(complaints.length===0){ emptyState.style.display='block'; return; }
+      else { emptyState.style.display='none'; }
+
+      complaints.forEach(c => {
+        const li = document.createElement('li'); li.className='complaint';
+        li.innerHTML = `
+          <div class="meta">
+            <h3>${escapeHtml(c.subject)}</h3>
+            <div class="info">${escapeHtml(c.author)} • ${formatDate(c.createdAt)}</div>
+            <p>${escapeHtml(c.details)}</p>
+          </div>
+          <div class="ctrls">
+            ${c.resolved 
+              ? '<span class="tick">&#10004;</span>'
+              : `<button class="small btn-resolve" data-id="${c.id}">Resolve</button>`}
+            <button class="small btn-delete" data-id="${c.id}">Delete</button>
+          </div>
+        `;
+        complaintsList.appendChild(li);
+      });
+    }
+
+    complaintsList.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      const id = btn.dataset.id;
+      if(btn.classList.contains('btn-delete')){
+        complaints = complaints.filter(c => c.id !== id);
+        save(); render();
+      }
+      if(btn.classList.contains('btn-resolve')){
+        const idx = complaints.findIndex(c=>c.id===id); if(idx===-1) return;
+        complaints[idx].resolved = true; save(); render();
+      }
+    });
+
+    function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+    function formatDate(iso){ const d=new Date(iso); return d.toLocaleString(); }
+
+    document.getElementById('clearBtn').addEventListener('click', ()=>{ form.reset(); });
+    load();
+
+    window.addEventListener('storage', (e)=>{ if(e.key===STORAGE_KEY) load(); });
+  </script>
+</body>
+</html>

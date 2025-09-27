@@ -1,0 +1,95 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  padding: 20px;
+  background: linear-gradient(135deg, #e6f0ff, #f9fbfc);
+}
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1e3a8a;
+}
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.nav button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  transition: all 0.3s;
+}
+.nav button:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.section {
+  display: none;
+}
+.active {
+  display: block;
+  animation: fadeIn 0.5s ease-in-out;
+}
+.filters, .date-block {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+select, input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: all 0.3s;
+}
+select:hover, input:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37,99,235,0.3);
+}
+.student-list {
+  margin-top: 20px;
+}
+.student {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  margin: 6px 0;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.student:hover {
+  background: #f1f5ff;
+  transform: scale(1.02);
+}
+.student.present { background: #dcfce7; border-left: 5px solid #16a34a; }
+.student.absent { background: #fee2e2; border-left: 5px solid #dc2626; }
+.actions button {
+  margin-left: 6px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.present-btn { background: #16a34a; color: white; }
+.present-btn:hover { background: #15803d; transform: scale(1.1); }
+.absent-btn { background: #dc2626; color: white; }
+.absent-btn:hover { background: #b91c1c; transform: scale(1.1); }
+.reset-btn { background: #6b7280; color: white; }
+.reset-btn:hover { background: #4b5563; transform: scale(1.1); }
+.clock { font-weight: bold; font-size: 18px; color: #1e3a8a; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

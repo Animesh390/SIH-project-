@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty – Marks Entry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+    body { background:#f4f7fa; color:#333; }
+    header {
+      background:#4f46e5; color:#fff; padding:18px 40px; font-size:22px;
+      font-weight:600; text-align:center; letter-spacing:0.5px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.1);
+    }
+    .container {
+      max-width:1100px; margin:30px auto; padding:20px; background:#fff;
+      border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    }
+    .filters {
+      display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap; align-items:center;
+    }
+    select, .search-input {
+      padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:14px;
+      background:#fafafa; transition:all 0.2s;
+    }
+    select:hover, .search-input:focus { border-color:#4f46e5; outline:none; }
+    .search-input { flex:1; min-width:200px; }
+    .add-btn {
+      padding:10px 18px; border:none; border-radius:8px;
+      background:#22c55e; color:#fff; font-size:14px; font-weight:500; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .add-btn:hover { background:#16a34a; }
+    .student-list { margin-top:20px; }
+    .student-card {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:14px 18px; background:#f9fafc; border-radius:10px; margin-bottom:12px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.04); cursor:pointer;
+      transition:transform 0.2s, background 0.2s;
+    }
+    .student-card:hover { background:#eef2ff; transform:translateY(-2px); }
+    .student-card strong { font-size:15px; color:#111827; }
+    .student-card span { font-size:13px; color:#555; }
+
+    /* Modal */
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      justify-content:center; align-items:center; animation:fadeIn 0.3s; }
+    .modal-content {
+      background:#fff; padding:25px; border-radius:14px; width:520px;
+      max-height:90vh; overflow-y:auto; box-shadow:0 6px 20px rgba(0,0,0,0.2);
+      animation:slideUp 0.3s;
+    }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    @keyframes slideUp { from{transform:translateY(40px);} to{transform:translateY(0);} }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+    .modal-header h2 { font-size:20px; margin:0; }
+    .close { font-size:22px; cursor:pointer; color:#555; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #eee; padding:10px; text-align:center; font-size:14px; }
+    th { background:#f3f4f6; }
+    input[type="number"], input[type="text"] {
+      width:80%; padding:6px; border:1px solid #ccc; border-radius:6px; text-align:center;
+    }
+    .btn {
+      margin-top:18px; padding:10px 20px; border:none; border-radius:8px;
+      background:#4f46e5; color:#fff; font-size:15px; font-weight:500;
+      cursor:pointer; transition:background 0.3s;
+    }
+    .btn:hover { background:#4338ca; }
+  </style>
+</head>
+<body>
+  <header>Faculty Portal – Marks Entry</header>
+
+  <div class="container">
+    <div class="filters">
+      <select id="branchFilter">
+        <option value="">Select Branch</option>
+        <option>CSE</option><option>ECE</option><option>ME</option><option>Civil</option>
+      </select>
+      <select id="yearFilter">
+        <option value="">Select Year</option>
+        <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
+      </select>
+      <select id="sectionFilter">
+        <option value="">Select Section</option>
+        <option>A</option><option>B</option><option>C</option>
+      </select>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by name...">
+      <button class="add-btn" onclick="openAddStudent()">+ Add Student</button>
+    </div>
+
+    <div class="student-list" id="studentList">
+      <div class="student-card" data-id="101" data-name="THE FLASH" data-branch="CSE" data-year="2nd" data-section="A">
+        <div><strong>THE FLASH</strong><div><span>CSE | 2nd Year | A</span></div></div>
+      </div>
+      <div class="student-card" data-id="102" data-name="Anjali Verma" data-branch="ECE" data-year="3rd" data-section="B">
+        <div><strong>Anjali Verma</strong><div><span>ECE | 3rd Year | B</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marks Modal -->
+  <div class="modal" id="marksModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="studentName"></h2>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <p id="studentDetails"></p>
+      <table><thead><tr><th>Subject</th><th>Marks</th></tr></thead><tbody id="marksTableBody"></tbody></table>
+      <button class="btn" onclick="saveMarks()">Save / Update Marks</button>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal" id="addStudentModal">
+    <div class="modal-content">
+      <div class="modal-header"><h2>Add Student</h2><span class="close" onclick="closeAddStudent()">&times;</span></div>
+      <table>
+        <tr><td>Name:</td><td><input type="text" id="newName"></td></tr>
+        <tr><td>Branch:</td><td><input type="text" id="newBranch"></td></tr>
+        <tr><td>Year:</td><td><input type="text" id="newYear"></td></tr>
+        <tr><td>Section:</td><td><input type="text" id="newSection"></td></tr>
+      </table>
+      <button class="btn" onclick="addStudent()">Add</button>
+    </div>
+  </div>
+
+  <script>
+    const studentList = document.getElementById('studentList');
+    const modal = document.getElementById('marksModal');
+    const studentName = document.getElementById('studentName');
+    const studentDetails = document.getElementById('studentDetails');
+    const marksTableBody = document.getElementById('marksTableBody');
+    const addStudentModal = document.getElementById('addStudentModal');
+    const searchInput = document.getElementById('searchInput');
+
+    const branchFilter = document.getElementById('branchFilter');
+    const yearFilter = document.getElementById('yearFilter');
+    const sectionFilter = document.getElementById('sectionFilter');
+
+    let currentStudentId = null;
+    const subjects = ["Maths", "Physics", "Chemistry", "Computer Science"];
+
+    function attachCardEvent(card) {
+      card.addEventListener('click', () => {
+        currentStudentId = card.dataset.id;
+        studentName.textContent = card.dataset.name;
+        studentDetails.textContent = `${card.dataset.branch} | ${card.dataset.year} Year | Section ${card.dataset.section}`;
+        marksTableBody.innerHTML = "";
+        subjects.forEach(sub => {
+          marksTableBody.innerHTML += `<tr>
+            <td>${sub}</td>
+            <td><input type="number" min="0" max="100" placeholder="Marks" data-subject="${sub}"></td>
+          </tr>`;
+        });
+        modal.style.display = "flex";
+      });
+    }
+
+    document.querySelectorAll('.student-card').forEach(card => attachCardEvent(card));
+
+    function closeModal() { modal.style.display = "none"; }
+
+    // ✅ Save Marks to localStorage
+    function saveMarks() {
+      const inputs = marksTableBody.querySelectorAll('input');
+      let marksData = [];
+      inputs.forEach(inp => marksData.push({ subject: inp.dataset.subject, marks: inp.value }));
+
+      let allMarks = JSON.parse(localStorage.getItem("studentMarks")) || {};
+      allMarks[currentStudentId] = {
+        name: studentName.textContent,
+        details: studentDetails.textContent,
+        marks: marksData
+      };
+      localStorage.setItem("studentMarks", JSON.stringify(allMarks));
+
+      alert("Marks saved successfully!");
+      closeModal();
+    }
+
+    function openAddStudent() { addStudentModal.style.display = "flex"; }
+    function closeAddStudent() { addStudentModal.style.display = "none"; }
+    function addStudent() {
+      let name = document.getElementById('newName').value;
+      let branch = document.getElementById('newBranch').value;
+      let year = document.getElementById('newYear').value;
+      let section = document.getElementById('newSection').value;
+      let id = Date.now();
+
+      let newCard = document.createElement('div');
+      newCard.className = "student-card";
+      newCard.dataset.id = id;
+      newCard.dataset.name = name;
+      newCard.dataset.branch = branch;
+      newCard.dataset.year = year;
+      newCard.dataset.section = section;
+      newCard.innerHTML = `<div><strong>${name}</strong><div><span>${branch} | ${year} Year | ${section}</span></div></div>`;
+      attachCardEvent(newCard);
+      studentList.appendChild(newCard);
+      closeAddStudent();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.toLowerCase();
+      const branchVal = branchFilter.value;
+      const yearVal = yearFilter.value;
+      const sectionVal = sectionFilter.value;
+
+      const students = studentList.querySelectorAll('.student-card');
+      students.forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        const branch = card.dataset.branch;
+        const year = card.dataset.year;
+        const section = card.dataset.section;
+
+        let match = true;
+        if (branchVal && branch !== branchVal) match = false;
+        if (yearVal && year !== yearVal) match = false;
+        if (sectionVal && section !== sectionVal) match = false;
+        if (query && !name.includes(query)) match = false;
+
+        card.style.display = match ? "flex" : "none";
+      });
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    branchFilter.addEventListener('change', applyFilters);
+    yearFilter.addEventListener('change', applyFilters);
+    sectionFilter.addEventListener('change', applyFilters);
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Profiles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: 'Segoe UI', sans-serif; background:#f0f4f8; margin:0; padding:20px; display:flex; flex-direction:column; align-items:center;}
+h2 { color:#0d47a1; text-align:center; margin-bottom:20px;}
+.table-container { width:95%; overflow-x:auto; }
+table { border-collapse:collapse; width:100%; min-width:1000px; box-shadow:0 4px 15px rgba(0,0,0,0.1); border-radius:10px; background:white; }
+th, td { padding:10px; border-bottom:1px solid #ccc; text-align:center; font-size:14px;}
+th { background:#2563eb; color:white; position:sticky; top:0; z-index:2;}
+tr:hover { background:#e3f2fd; }
+.action-btn { padding:4px 8px; border:none; border-radius:6px; cursor:pointer; color:white; margin:0 2px; }
+.edit-btn { background:#f59e0b; } .edit-btn:hover { background:#b45309; }
+.delete-btn { background:#dc2626; } .delete-btn:hover { background:#991b1b; }
+.search-bar { margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.search-bar input, .search-bar select { padding:8px; border-radius:6px; border:1px solid #ccc; }
+@media(max-width:768px){ table{min-width:600px;} }
+</style>
+</head>
+<body>
+<h2>📋 Student Profiles</h2>
+
+<div class="search-bar">
+  <input type="text" id="searchName" placeholder="Search by Name">
+  <select id="searchCourse"><option value="">All Courses</option></select>
+  <select id="searchYear"><option value="">All Years</option></select>
+  <select id="searchSemester"><option value="">All Semesters</option></select>
+</div>
+
+<div class="table-container">
+  <table id="studentsTable">
+    <thead>
+      <tr>
+        <th>Photo</th><th>Name</th><th>Roll</th><th>Course</th><th>Branch</th><th>Year</th><th>Semester</th><th>Section</th>
+        <th>Admission No.</th><th>Email</th><th>DOB</th><th>Phone</th><th>Father</th><th>Mother</th><th>Contact</th><th>Profession</th>
+        <th>Permanent Addr</th><th>Present Addr</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+const studentsTable = document.getElementById('studentsTable').querySelector('tbody');
+const STORAGE_KEY='students_list_v1';
+
+const courses = ["B.Tech","BCA","MCA","MBA"];
+const currentYear=new Date().getFullYear();
+const years=[]; for(let y=currentYear; y>=2000; y--) years.push(y);
+const semesters=["1","2","3","4","5","6","7","8","Passout"];
+
+// Populate search
+const searchCourse=document.getElementById('searchCourse');
+courses.forEach(c=>searchCourse.innerHTML+=`<option value="${c}">${c}</option>`);
+const searchYear=document.getElementById('searchYear');
+years.forEach(y=>searchYear.innerHTML+=`<option value="${y}">${y}</option>`);
+const searchSemester=document.getElementById('searchSemester');
+semesters.forEach(s=>searchSemester.innerHTML+=`<option value="${s}">${s}</option>`);
+
+function readStudents(){ try{ const raw=localStorage.getItem(STORAGE_KEY); return raw?JSON.parse(raw):[];}catch(e){return[];}}
+function renderTable(){
+  studentsTable.innerHTML='';
+  const students = readStudents();
+  students.forEach(s=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><img src="${s.photo||'default-user.png'}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;"></td>
+      <td>${s['Name (Mandatory)']}</td>
+      <td>${s['Roll Number (Mandatory)']}</td>
+      <td>${s['courseSelect']}</td>
+      <td>${s['branchSelect']}</td>
+      <td>${s['yearSelect']}</td>
+      <td>${s['semester']}</td>
+      <td>${s.semester==="Passout"?"":s['Section']}</td>
+      <td>${s['Admission Number']}</td>
+      <td>${s['Gmail (Mandatory)']}</td>
+      <td>${s['Date of Birth (Mandatory)']}</td>
+      <td>${s['Phone Number (Mandatory)']}</td>
+      <td>${s['Father Name']}</td>
+      <td>${s['Mother Name']}</td>
+      <td>${s['Contact']}</td>
+      <td>${s['Profession']}</td>
+      <td>${s['Permanent Address']}</td>
+      <td>${s['Present Address']}</td>
+      <td>
+        <button class="action-btn edit-btn">✏️</button>
+        <button class="action-btn delete-btn">🗑️</button>
+      </td>`;
+    // Delete
+    tr.querySelector('.delete-btn').addEventListener('click', ()=>{
+      if(confirm("Delete this student?")){
+        const remaining = readStudents().filter(x=>x['Roll Number (Mandatory)']!==s['Roll Number (Mandatory)']);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(remaining));
+        renderTable();
+      }
+    });
+    // Edit
+    tr.querySelector('.edit-btn').addEventListener('click', ()=>{
+      localStorage.setItem('editStudentRoll', s['Roll Number (Mandatory)']);
+      window.location.href='add_student.html';
+    });
+    studentsTable.appendChild(tr);
+  });
+}
+
+renderTable();
+
+// Search filter
+['searchName','searchCourse','searchYear','searchSemester'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', filterTable);
+});
+function filterTable(){
+  const nameVal=document.getElementById('searchName').value.toLowerCase();
+  const courseVal=document.getElementById('searchCourse').value;
+  const yearVal=document.getElementById('searchYear').value;
+  const semVal=document.getElementById('searchSemester').value;
+  document.querySelectorAll('#studentsTable tbody tr').forEach(tr=>{
+    const tds=tr.querySelectorAll('td');
+    const show=tds[1].textContent.toLowerCase().includes(nameVal) &&
+               (courseVal===""||tds[3].textContent===courseVal) &&
+               (yearVal===""||tds[5].textContent===yearVal) &&
+               (semVal===""||tds[6].textContent===semVal);
+    tr.style.display=show?'':'none';
+  });
+}
+</script>
+</body>
+</html>

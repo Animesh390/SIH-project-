@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admit Card — College Name</title>
+  <style>
+    /* --- Reset / Base --- */
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif; background:#f2f6fa; color:#111; }
+    .page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; flex-direction:column; }
+
+    /* --- Card container --- */
+    .admit-card {
+      width:900px;
+      max-width:98%;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border-radius:07px;
+      box-shadow:0 18px 40px rgba(16, 40, 80, 0.12);
+      padding:22px;
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:18px;
+      align-items:stretch;
+      border:1px solid rgba(20,40,80,0.05);
+    }
+
+    /* --- Left: main info --- */
+    .left { padding:18px; }
+    .header {
+      display:flex; gap:16px; align-items:center;
+      border-bottom:1px dashed rgba(0,0,0,0.06);
+      padding-bottom:12px; margin-bottom:12px;
+    }
+    .logo {
+      width:72px; height:72px; border-radius:8px;
+      overflow:hidden; background:#e9eef8;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .logo img { width:80%; height:80%; object-fit:contain; display:block; } /* smaller logo */
+
+    .college-info h1 { font-size:20px; margin:0 0 4px 0; letter-spacing:0.2px; }
+    .college-info p { margin:0; font-size:13px; color:#3b4b63; opacity:0.85; }
+
+    .meta { display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; }
+    .meta .item {
+      background:#f6f9ff; padding:10px 12px;
+      border-radius:8px;
+      box-shadow: inset 0 0 0 1px rgba(10,30,80,0.02);
+      font-size:13px;
+    }
+
+    .details { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:18px; }
+    .field {
+      background:#ffffff; padding:12px; border-radius:10px;
+      border:1px solid rgba(10,30,80,0.03); font-size:14px;
+    }
+    .field label { display:block; font-size:12px; color:#556; margin-bottom:6px; }
+    .field .value { font-weight:600; color:#0b2540; }
+
+    /* --- Right: photo, exam details, signatures --- */
+    .right {
+      padding:18px; display:flex; flex-direction:column;
+      gap:12px; align-items:stretch;
+    }
+    .photo {
+      height:300px; border-radius:10px; overflow:hidden;
+      border:1px solid rgba(10,30,80,0.06); background:#f4f7fb;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .photo img { width:90%; height:90%; object-fit:cover; display:block; }
+
+    .exam-box {
+      background:#fff; border-radius:10px; padding:10px;
+      border:1px solid rgba(10,30,80,0.03); font-size:13px;
+    }
+    .exam-box h3 { margin:0 0 8px 0; font-size:14px; }
+    .exam-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .exam-table th, .exam-table td {
+      text-align:left; padding:6px 4px;
+      border-bottom:1px dashed rgba(10,30,80,0.04);
+    }
+    .exam-table th { color:#40506a; font-weight:600; font-size:09px; }
+
+    .signatures { display:flex; gap:12px; margin-top:6px; }
+    .sig { flex:1; text-align:center; padding-top:16px; }
+    .sig .line {
+      display:inline-block; width:80%; height:1px;
+      background:rgba(0,0,0,0.18); margin-bottom:6px;
+    }
+    .sig small { display:block; font-size:12px; color:#445; }
+
+    /* --- Footer small text --- */
+    .note {
+      grid-column:1 / -1; font-size:10px; color:#4b5b73; opacity:0.9;
+      margin-top:6px; border-top:1px dashed rgba(10,30,80,0.03); padding-top:10px;
+    }
+
+    /* --- QR / ID strip --- */
+    .id-strip {
+      display:flex; justify-content:space-between; align-items:center;
+      gap:12px; margin-top:12px; padding:10px 12px; border-radius:10px;
+      background:linear-gradient(90deg,#fbfdff,#ffffff);
+      border:1px solid rgba(10,30,80,0.03); font-size:11px;
+    }
+    .qr-placeholder {
+      width:70px; height:70px; background:#eef3ff;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:6px; border:1px dashed rgba(10,30,80,0.06);
+      font-size:12px; color:#545;
+    }
+
+    /* --- Download button --- */
+    .download-btn {
+      margin-top:20px; padding:10px 20px; font-size:14px; font-weight:600;
+      background:#0b2540; color:#fff; border:none; border-radius:8px;
+      cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1);
+      transition:all 0.2s ease;
+    }
+    .download-btn:hover { background:#143b66; }
+
+    /* --- Responsive --- */
+    @media (max-width:880px){
+      .admit-card { grid-template-columns: 1fr; }
+      .right { order:2; }
+      .left { order:1; }
+    }
+
+    /* --- Print styling --- */
+    @media print {
+      @page { size: A4 landscape; margin:10mm; } /* Force landscape & fit in one page */
+      body { background:transparent; }
+      .page { padding:0; }
+      .admit-card {
+        box-shadow:none; border:none; border-radius:0;
+        width:100%; max-width:none; margin:0 auto;
+        page-break-inside: avoid;
+      }
+      .download-btn { display:none; } /* Hide button while printing */
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <article class="admit-card" role="article" aria-label="Admit Card">
+      <!-- LEFT -->
+      <section class="left">
+        <div class="header">
+          <div class="logo" aria-hidden="true">
+            <img src="accuratelogo.png" alt="College Logo (replace path)" />
+          </div>
+          <div class="college-info">
+            <h1>Accurate Group of Institution</h1>
+            <p>Affiliated to AKTU</p>
+            <p style="font-size:12px; margin-top:6px;">Exam Session: <strong>2025-2026</strong></p>
+          </div>
+        </div>
+
+        <div class="meta" aria-hidden="true">
+          <div class="item">Program: <strong>B.Tech — CSE (AIML)</strong></div>
+          <div class="item">Semester: <strong>3rd</strong></div>
+          <div class="item">Exam Type: <strong>Sessional 1st</strong></div>
+        </div>
+
+        <div class="details" style="margin-top:16px;">
+          <div class="field">
+            <label>Student Name</label>
+            <div class="value">Animesh</div>
+            <small style="color:#5b6b80;">(Replace with actual student name)</small>
+          </div>
+
+          <div class="field">
+            <label>Roll Number</label>
+            <div class="value">2402251530014</div>
+          </div>
+
+          <div class="field">
+            <label>Father / Guardian</label>
+            <div class="value">Mr. Subhash Chandra Gangwar</div>
+          </div>
+
+          <div class="field">
+            <label>Date of Birth</label>
+            <div class="value">26 July 2007</div>
+          </div>
+
+          <div class="field">
+            <label>Exam Centre</label>
+            <div class="value">Main Campus — Hall 3</div>
+          </div>
+
+          <div class="field">
+            <label>Seat / Block</label>
+            <div class="value">Block A — Seat 24</div>
+          </div>
+        </div>
+
+        <div class="note">
+          Important: Candidate must carry a valid college ID and this admit card to the exam centre. Any form of malpractice will lead to strict action. Reach the centre 30 minutes before the start time.
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="right" aria-label="Photo and exam schedule">
+        <div class="photo" title="Student Photo">
+          <img src="1000114391.jpg" alt="Student Photo (replace path)" />
+        </div>
+
+        <div class="exam-box">
+          <h3>Exam Schedule</h3>
+          <table class="exam-table" role="table" aria-label="Exam schedule">
+            <thead>
+              <tr><th>Subject</th><th>Date</th><th>Time</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Data Structures</td><td>10 Oct 2025</td><td>10:00 — 01:00</td></tr>
+              <tr><td>Python Progrmming</td><td>13 Oct 2025</td><td>10:00 — 01:00</td></tr>
+              <tr><td>DSTL</td><td>16 Oct 2025</td><td>10:00 — 01:00</td></tr>
+              <tr><td>Technical Communication</td><td>17 Oct 2025</td><td>10:00 — 01:00</td></tr>
+              <tr><td>Digital Electonics</td><td>20 Oct 2025</td><td>10:00 — 01:00</td></tr>
+            </tbody>
+          </table>
+
+          <div class="id-strip" style="margin-top:12px;">
+            <div>
+              <div style="font-size:12px;">Admit Card ID</div>
+              <div style="font-weight:700; letter-spacing:1px;">ADM-2025-0098</div>
+            </div>
+            <div class="qr-placeholder" aria-hidden="true">QR</div>
+            <div style="text-align:right; font-size:12px;">
+              <div>Issued: <strong>01 Sep 2025</strong></div>
+              <div>Valid Till: <strong>25 Oct 2025</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="signatures" style="margin-top:6px;">
+          <div class="sig">
+            <div class="line" aria-hidden="true"></div>
+            <small>Mentor Signature</small>
+          </div>
+          <div class="sig">
+            <div class="line" aria-hidden="true"></div>
+            <small>HOD Signature</small>
+          </div>
+        </div>
+      </aside>
+    </article>
+
+    <!-- Download Button -->
+    <button class="download-btn" onclick="window.print()">Download Admit Card</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay & Fees Update</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #004080;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #004080;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .qr-box {
+      text-align: center;
+    }
+
+    .qr-box img {
+      display: block;
+      margin: 10px auto;
+      width: 200px;
+      height: 200px;
+    }
+
+    .upi-id {
+      font-size: 1.1rem;
+      color: #333;
+      background: #f0f0f0;
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .account-details {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: #004080;
+      color: white;
+    }
+
+    .paid {
+      color: green;
+      font-weight: bold;
+    }
+
+    .pending {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Pay & Fees Update
+  </header>
+
+  <div class="container">
+    
+    <!-- QR + UPI Section -->
+    <div class="section qr-box">
+      <h2>Pay via UPI OR scan to pay</h2>
+      <img src="QRpayment1.png" alt="UPI QR Code">
+      <p class="upi-id">UPI ID: <strong>animeshgangwar702-1@oksbi</strong></p>
+    </div>
+
+    <!-- Bank Transfer Section -->
+    <div class="section">
+      <h2>Bank Account Transfer</h2>
+      <div class="account-details">
+        <p><strong>Account Holder:</strong> Accurate Group of Institution</p>
+        <p><strong>Bank Name:</strong> State Bank of India</p>
+        <p><strong>Account No:</strong> 123456789012</p>
+        <p><strong>IFSC Code:</strong> SBIN0001234</p>
+      </div>
+    </div>
+
+    <!-- Fees Updates Section -->
+    <div class="section">
+      <h2>Fees Updates</h2>
+      <table>
+        <tr>
+          <th>Installment</th>
+          <th>Amount (₹)</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+        <tr>
+          <td>1st Installment</td>
+          <td>20,000</td>
+          <td class="paid">Paid</td>
+          <td>05-07-2025</td>
+        </tr>
+        <tr>
+          <td>2nd Installment</td>
+          <td>20,000</td>
+          <td class="pending">Pending</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>3rd Installment</td>
+          <td>20,000</td>
+          <td class="pending">Pending</td>
+          <td>-</td>
+        </tr>
+      </table>
+      <p><strong>Total Fees:</strong> ₹60,000</p>
+      <p><strong>Paid:</strong> ₹20,000 | <strong>Remaining:</strong> ₹40,000</p>
+    </div>
+
+  </div>
+</body>
+</html>
